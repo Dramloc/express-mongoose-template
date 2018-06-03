@@ -1,0 +1,10 @@
+- [ ] pm2
+- [ ] npm static config (.npmrc)
+- [ ] nvm
+- [ ] .env config
+- [ ] logging: winston, morgan, loggly, etc.
+- [ ] helmet
+- [ ] higher order functions
+- [ ] monitoring: keymetrics & pm2, prometheus, etc.
+- [ ] testing
+- [ ] ssr
