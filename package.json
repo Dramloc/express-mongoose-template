@@ -5,10 +5,11 @@
   "author": "Antoine Colmard <a.colmard@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
     "dev": "nodemon -w src --exec \"babel-node src\"",
     "build": "babel src -s -D -d dist",
-    "prestart": "npm run -s build",
-    "start": "node dist",
+    "preserve": "npm run -s build",
+    "serve": "cross-env NODE_ENV=production node dist",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -31,9 +32,11 @@
     "@babel/node": "^7.0.0-beta.49",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.49",
     "@babel/preset-env": "^7.0.0-beta.49",
+    "cross-env": "^5.1.6",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.12.0",
+    "if-env": "^1.0.4",
     "nodemon": "^1.17.5"
   }
 }
