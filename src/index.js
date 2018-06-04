@@ -17,7 +17,7 @@ logger.info('server process starting');
 
 const app = express();
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'production') {
   // HTTP request logger
   app.use(morgan('dev'));
   // GZIP compression
