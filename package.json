@@ -1,5 +1,5 @@
 {
-  "name": "node-boilerplate",
+  "name": "express-boilerplate",
   "version": "1.0.0",
   "main": "dist",
   "author": "Antoine Colmard <a.colmard@gmail.com>",

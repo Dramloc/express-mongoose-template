@@ -1,4 +1,4 @@
-# node-boilerplate
+# express-boilerplate
 
 ## Usage
 
@@ -36,4 +36,3 @@ yarn lint
 
 - [ ] higher order functions
 - [ ] testing
-- [ ] ssr
