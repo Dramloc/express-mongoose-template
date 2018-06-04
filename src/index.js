@@ -5,13 +5,15 @@ import express from 'express';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import winston from 'winston';
 
 import config from './config';
 import errorHandler from './middleware/error-handler';
 import notFound from './middleware/not-found';
 
-winston.info('Server process starting');
+import createLogger from './logger';
+
+const logger = createLogger('boot');
+logger.info('server process starting');
 
 const app = express();
 
@@ -33,25 +35,22 @@ app.use(errorHandler());
 // Not found handler
 app.use(notFound());
 
-winston.info(`Connecting to database ${config.mongodb.url}...`);
+logger.info(`connecting to database ${config.mongodb.url}`);
 mongoose.connect(config.mongodb.url, config.mongodb.options);
 mongoose.connection
   .on('error', (error) => {
-    winston.error(`Unable to connect to database ${config.mongodb.url}.`, error);
+    logger.error(`unable to connect to database ${config.mongodb.url}`, error);
     process.exit(10);
   })
   .once('open', () => {
-    winston.info(`Connection to database ${config.mongodb.url} established.`);
-    winston.info(`Starting http server on http://${config.host}:${config.port}...`);
+    logger.info(`connection to database ${config.mongodb.url} established`);
+    logger.info(`starting http server on http://${config.host}:${config.port}`);
     app.listen(config.port, config.host, (error) => {
       if (error) {
-        winston.error(
-          `Unable to start http server on http://${config.host}:${config.port}.`,
-          error,
-        );
+        logger.error(`unable to start http server on http://${config.host}:${config.port}`, error);
         process.exit(10);
       }
-      winston.info(`Http server started on http://${config.host}:${config.port}.`);
+      logger.info(`http server started on http://${config.host}:${config.port}`);
     });
   });
 
