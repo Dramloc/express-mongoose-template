@@ -8,6 +8,7 @@ import morgan from 'morgan';
 
 import config from './config';
 import errorHandler from './middleware/error-handler';
+import images from './images';
 import notFound from './middleware/not-found';
 
 import createLogger from './logger';
@@ -29,6 +30,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Mount API endpoints
+app.use('/api/v1/images', images);
 
 // Error handler
 app.use(errorHandler());
