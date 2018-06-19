@@ -2,6 +2,8 @@
 
 ## Usage
 
+Copy `.env.example` to `.env` and customize it to fit your needs.
+
 Start local development server (NODE_ENV !== production) or production server (NODE_ENV === production)
 
 ```shell
