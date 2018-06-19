@@ -10,6 +10,7 @@ export default function errorHandler() {
     return res.status(status).json({
       status,
       message,
+      errors: err.errors,
     });
   };
 }

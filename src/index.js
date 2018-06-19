@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 
+import articles from './articles';
 import config from './config';
 import createLogger from './logger';
 import errorHandler from './middleware/error-handler';
@@ -32,6 +33,7 @@ app.use(bodyParser.json());
 
 // Mount API endpoints
 app.use('/api/v1/images', images);
+app.use('/api/v1/articles', articles);
 
 // Error handler
 app.use(errorHandler());
