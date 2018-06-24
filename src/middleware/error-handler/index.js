@@ -9,7 +9,7 @@ export default function errorHandler() {
     if (!err) {
       return next();
     }
-    logger.error(err);
+    logger.error(err.stack);
     const status = err.status || httpStatus.INTERNAL_SERVER_ERROR;
     const message = err.message || httpStatus['500_MESSAGE'];
     return res.status(status).json({
