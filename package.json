@@ -24,6 +24,7 @@
     "helmet": "^3.21.3",
     "lodash": "^4.17.15",
     "mongoose": "^5.9.3",
+    "mongoose-unique-validator": "^2.0.3",
     "ora": "^4.0.3",
     "winston": "^3.2.1"
   },

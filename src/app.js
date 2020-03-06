@@ -3,7 +3,7 @@ import compression from "compression";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import groupsRouter from "./groups/index.js";
+import articlesRouter from "./articles/index.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { notFoundHandler } from "./utils/notFoundHandler.js";
 import { oraMiddleware } from "./utils/oraMiddleware.js";
@@ -29,7 +29,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 
 // Our application routes:
-app.use("/api/v1/groups", groupsRouter);
+app.use("/api/v1/articles", articlesRouter);
 
 // Handle requests matching no routes.
 app.use(notFoundHandler);

@@ -9,21 +9,21 @@ import {
   validate,
   validateId
 } from "../utils/rest.js";
-import { Group } from "./Group.js";
+import { Article } from "./Article.js";
 
 const router = new express.Router();
 
 router
   .route("/")
-  .get(find(Group))
-  .post(bind(Group), validate, save);
+  .get(find(Article))
+  .post(bind(Article), validate, save);
 
-router.param("id", validateId).param("id", loadId(Group));
+router.param("id", validateId).param("id", loadId(Article));
 
 router
   .route("/:id")
   .get(findById)
-  .put(bind(Group), validate, save)
+  .put(bind(Article), validate, save)
   .delete(remove);
 
 export default router;
