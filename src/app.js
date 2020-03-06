@@ -3,10 +3,10 @@ import compression from "compression";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import morgan from "morgan";
 import articlesRouter from "./articles/index.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { notFoundHandler } from "./utils/notFoundHandler.js";
-import { oraMiddleware } from "./utils/oraMiddleware.js";
 
 const app = express();
 
@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== "production") {
   // you can edit your HTTP server (e.g.: Apache, NGINX, etc.) to handle the following cases:
 
   // Add HTTP request logs to the console.
-  app.use(oraMiddleware);
+  app.use(morgan("dev"));
   // Add gzip compression.
   app.use(compression());
   // Add CORS headers.
