@@ -6,7 +6,7 @@
   ```shell
   yarn
   ```
-- Copy `.env.development` and rename it to `.env` for a default configuration.
+- Copy `.env.example` and rename it to `.env` for a default configuration.
 - Run project:
   ```shell
   yarn start
@@ -32,7 +32,7 @@
 Application configuration is provided by environment variables and accessed in code with `process.env.VARIABLE_NAME`.
 
 In order to share configurations, you can add a `.env` file at the root of the project.
-You can copy `.env.development` and rename it to `.env` for a default configuration.
+You can copy `.env.example` and rename it to `.env` for a default configuration.
 
 The configuration variables usage are detailed in the following table:
 
@@ -41,6 +41,8 @@ The configuration variables usage are detailed in the following table:
 | `PORT`               | `8080`                              | The port used by the HTTP server (more information [here](https://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback)) |
 | `HOST`               | `localhost`                         | The host used by the HTTP server (more information [here](https://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback)) |
 | `MONGODB_URL`        | `mongodb://localhost:27017/example` | The MongoDB connection string (more information [here](https://docs.mongodb.com/manual/reference/connection-string/))                    |
+
+> If new environment variables are required by the app, they should be added to the `.env.example` to document them.
 
 ## Linting
 
