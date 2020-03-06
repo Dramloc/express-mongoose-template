@@ -2,8 +2,8 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
 import express from "express";
+import pino from "express-pino-logger";
 import helmet from "helmet";
-import morgan from "morgan";
 import articlesRouter from "./articles/index.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { notFoundHandler } from "./utils/notFoundHandler.js";
@@ -15,14 +15,16 @@ if (process.env.NODE_ENV !== "production") {
   // Depending on the use case, you can move these middleware outside of this `if` block or
   // you can edit your HTTP server (e.g.: Apache, NGINX, etc.) to handle the following cases:
 
-  // Add HTTP request logs to the console.
-  app.use(morgan("dev"));
   // Add gzip compression.
   app.use(compression());
   // Add CORS headers.
   app.use(cors());
 }
 
+// Expose a logger as `log` on the express `req` parameter and log requests.
+// Logging every request have some caveats if they contain sensitive information,
+// consider redacting some information using `pino-noir`.
+app.use(pino());
 // Add security headers to every requests.
 app.use(helmet());
 // Allow express to parse JSON bodies.
