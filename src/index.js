@@ -1,90 +1,95 @@
-import bodyParser from 'body-parser';
-import compression from 'compression';
-import cors from 'cors';
-import express from 'express';
-import helmet from 'helmet';
-import mongoose from 'mongoose';
-import morgan from 'morgan';
+import dotenv from "dotenv";
+import http from "http";
+import mongoose from "mongoose";
+import ora from "ora";
+import app from "./app.js";
 
-import articles from './articles';
-import config from './config';
-import createLogger from './logger';
-import errorHandler from './middleware/error-handler';
-import images from './images';
-import notFound from './middleware/not-found';
+// Inject environment variables defined in the `.env` file placed at the root of the project.
+dotenv.config();
 
-const logger = createLogger('boot');
-logger.info('server process starting');
+/** @type {(url: string, options: mongoose.ConnectionOptions) => Promise<void>} */
+const connectToDatabase = async (url, options) => {
+  const spinner = ora(`Connecting to database "${url}"`).start();
+  try {
+    await mongoose.connect(url, {
+      // Use the new MongoDB driver implementation for parsing connection strings.
+      // See: https://mongoosejs.com/docs/deprecations.html#the-usenewurlparser-option
+      useNewUrlParser: true,
+      // Use the MongoDB driver `createIndex()` function instead of the deprecated `ensureIndex()`
+      // See: https://mongoosejs.com/docs/deprecations.html#ensureindex
+      useCreateIndex: true,
+      // Allow the MongoDB driver to periodically check for changes in a MongoDB shared cluster.
+      // See: https://mongoosejs.com/docs/deprecations.html#useunifiedtopology
+      useUnifiedTopology: true,
 
-const app = express();
-
-if (process.env.NODE_ENV !== 'production') {
-  // HTTP request logger
-  app.use(morgan('dev'));
-  // GZIP compression
-  app.use(compression());
-  // Enable CORS
-  app.use(cors());
-}
-// Add HTTP Headers security
-app.use(helmet());
-// Parse HTTP JSON bodies
-app.use(bodyParser.json());
-
-// Mount API endpoints
-app.use('/api/v1/images', images);
-app.use('/api/v1/articles', articles);
-
-// Error handler
-app.use(errorHandler());
-// Not found handler
-app.use(notFound());
-
-logger.info(`connecting to database ${config.mongodb.url}`);
-mongoose.connect(
-  config.mongodb.url,
-  config.mongodb.options,
-);
-mongoose.connection
-  .on('error', (error) => {
-    logger.error(`unable to connect to database ${config.mongodb.url}`, error);
-    process.exit(10);
-  })
-  .once('open', () => {
-    logger.info(`connection to database ${config.mongodb.url} established`);
-    logger.info(`starting http server on http://${config.host}:${config.port}`);
-    app.listen(config.port, config.host, (error) => {
-      if (error) {
-        logger.error(`unable to start http server on http://${config.host}:${config.port}`, error);
-        process.exit(10);
-      }
-      if (process.send) {
-        process.send('ready');
-      }
-      logger.info(`http server started on http://${config.host}:${config.port}`);
+      ...options
     });
-  });
 
-function stop() {
-  logger.info('stopping server process');
-  logger.info('closing database connection');
-  mongoose.connection.close((error) => {
-    if (error) {
-      logger.error('failed to close database connection');
-      logger.info('shutting down server');
-      return process.exit(1);
-    }
-    logger.info('database connection closed');
-    logger.info('shutting down server');
-    return process.exit(0);
-  });
-}
+    // Once connected to the database, we listen for process shutdown signals and
+    // close the connection gracefully.
+    const disconnectFromDatabase = async () => {
+      const spinner = ora(`Disconnecting from database ${url}`).start();
+      await mongoose.connection.close();
+      spinner.succeed(`Disconnected from database ${url}`);
+    };
+    process
+      .once("SIGINT", disconnectFromDatabase)
+      .once("SIGTERM", disconnectFromDatabase);
 
-process.on('SIGINT', stop);
-process.on('message', (msg) => {
-  if (msg === 'shutdown') {
-    stop();
+    spinner.succeed(`Connected to database "${url}"`);
+  } catch (error) {
+    spinner.fail(`Failed to connect to database "${url}"`);
+    throw error;
   }
-});
+};
+
+/** @type {(app: http.RequestListener, options: import('net').ListenOptions) => Promise<void>} */
+const startHTTPServer = async (app, options) => {
+  const address = `http://${options.host}:${options.port}`;
+  const spinner = ora(`Starting HTTP server on "${address}"`).start();
+  return new Promise((resolve, reject) => {
+    http
+      .createServer(app)
+      .listen(options, () => {
+        spinner.succeed(`HTTP server started on "${address}"`);
+        return resolve();
+      })
+      .on("error", error => {
+        spinner.fail(`Failed to start HTTP server on "${address}"`);
+        reject(error);
+      });
+  });
+};
+
+/** @type {(app: http.RequestListener) => Promise<void>} */
+const startServer = async app => {
+  const spinner = ora(`Starting server`).start();
+  try {
+    await Promise.all([
+      // Retrieve mongodb information from environement variables and connect to the database.
+      // While the connection is being established, mongoose will buffer operations.
+      // See: https://mongoosejs.com/docs/connections.html#buffering
+      connectToDatabase(process.env.MONGODB_URL, {
+        user: process.env.MONGODB_USER,
+        pass: process.env.MONGODB_PASSWORD
+      }),
+
+      // Retrieve HTTP server host and port from environment variables,
+      // create HTTP server and listen to connections.
+      startHTTPServer(app, {
+        host: process.env.HOST,
+        port: parseInt(process.env.PORT, 10)
+      })
+    ]);
+    spinner.succeed("Server started");
+  } catch (error) {
+    // If something fails during start up (http server or database connection),
+    // we stop the server process.
+    spinner.fail(`Failed to start server`);
+    process.exit(1);
+  }
+};
+
+startServer(app);
 
 export default app;

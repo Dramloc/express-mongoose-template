@@ -2,39 +2,66 @@
 
 ## Usage
 
-Copy `.env.example` to `.env` and customize it to fit your needs.
+- Install dependencies:
+  ```shell
+  yarn
+  ```
+- Copy `.env.development` and rename it to `.env` for a default configuration.
+- Run project:
+  ```shell
+  yarn start
+  ```
 
-Start local development server (NODE_ENV !== production) or production server (NODE_ENV === production)
+> The previous command will check if `NODE_ENV` environment variable and launch server in development or production mode.
+> By default, development mode will be used.
+>
+> You can launch the following commands to choose the mode explicitly:
+>
+> ```shell
+> yarn start:development
+> # This will launch the server with nodemon. It will reload on every file change.
+> ```
+>
+> ```shell
+> yarn start:production
+> # This will build source code with babel and launch server with node.
+> ```
 
-```shell
-yarn start
-```
+## Configuration
 
-Serve local development server
+Application configuration is provided by environment variables and accessed in code with `process.env.VARIABLE_NAME`.
 
-```shell
-yarn dev
-```
+In order to share configurations, you can add a `.env` file at the root of the project.
+You can copy `.env.development` and rename it to `.env` for a default configuration.
 
-Launch production server
+The configuration variables usage are detailed in the following table:
 
-```shell
-yarn serve
-```
+| Environment variable | Default value                       | Usage                                                                                                                                    |
+| -------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`               | `8080`                              | The port used by the HTTP server (more information [here](https://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback)) |
+| `HOST`               | `localhost`                         | The host used by the HTTP server (more information [here](https://nodejs.org/api/net.html#net_server_listen_port_host_backlog_callback)) |
+| `MONGODB_URL`        | `mongodb://localhost:27017/example` | The MongoDB connection string (more information [here](https://docs.mongodb.com/manual/reference/connection-string/))                    |
 
-Run tests
+## Linting
 
-```shell
-yarn test
-```
-
-Lint sources
+Linting code with eslint
 
 ```shell
 yarn lint
 ```
 
-## TODO
+Autofixing eslint fixable linting issues
 
-- [ ] higher order functions
-- [ ] testing
+```shell
+yarn lint --fix
+```
+
+Configuration is kept simple but can be changed by editing the `.eslintrc` file.
+
+## Formatting
+
+Formatting code with prettier
+
+```shell
+yarn format
+```
