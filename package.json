@@ -23,7 +23,6 @@
     "express-pino-logger": "^4.0.0",
     "filesize": "^6.1.0",
     "helmet": "^3.21.3",
-    "lodash": "^4.17.15",
     "mongoose": "^5.9.3",
     "mongoose-unique-validator": "^2.0.3",
     "pino": "^5.17.0"

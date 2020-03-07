@@ -1,5 +1,4 @@
 import Boom from "@hapi/boom";
-import pick from "lodash/fp/pick.js";
 import mongoose from "mongoose";
 
 export const find = Model => async (req, res, next) => {
@@ -47,6 +46,12 @@ export const loadId = Model => async (req, res, next, id) => {
 };
 
 export const findById = (req, res) => res.json(res.locals.entity);
+
+const pick = allowedKeys => object => {
+  const entries = Object.entries(object);
+  const filteredEntries = entries.filter(([key]) => allowedKeys.includes(key));
+  return Object.fromEntries(filteredEntries);
+};
 
 export const bind = Model => {
   const allowedKeys = Object.keys(Model.schema.obj);
