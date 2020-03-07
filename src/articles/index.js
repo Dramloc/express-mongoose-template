@@ -11,7 +11,7 @@ import {
 } from "../utils/rest.js";
 import { Article } from "./Article.js";
 
-const router = new express.Router();
+const router = express.Router();
 
 router
   .route("/")
@@ -23,7 +23,8 @@ router.param("id", validateId).param("id", loadId(Article));
 router
   .route("/:id")
   .get(findById)
-  .put(bind(Article), validate, save)
+  .put(bind(Article, { overwrite: true }), validate, save)
+  .patch(bind(Article), validate, save)
   .delete(remove);
 
 export default router;

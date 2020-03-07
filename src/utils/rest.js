@@ -12,14 +12,14 @@ export const find = Model => async (req, res, next) => {
       ...query
     } = req.query;
     const listQuery = Model.find(query)
-      .limit(parseInt(limit, 0))
-      .skip(parseInt(skip, 0))
+      .limit(Number(limit))
+      .skip(Number(skip))
       .sort(sort)
       .select(select)
       .populate(populate);
     const countQuery = Model.find(listQuery.getQuery()).countDocuments();
-    const [totalCount, list] = await Promise.all([countQuery, listQuery]);
-    res.set("X-Total-Count", totalCount);
+    const [list, totalCount] = await Promise.all([listQuery, countQuery]);
+    res.set("X-Total-Count", String(totalCount));
     return res.json(list);
   } catch (error) {
     return next(error);
@@ -35,17 +35,17 @@ export const validateId = (req, res, next, id) => {
 
 export const loadId = Model => async (req, res, next, id) => {
   const { select, populate = "" } = req.query;
-  const entity = await Model.findById(id)
+  const document = await Model.findById(id)
     .select(select)
     .populate(populate);
-  if (!entity) {
+  if (!document) {
     return next(Boom.notFound(`${Model.modelName} "${id}" not found.`));
   }
-  res.locals.entity = entity;
+  res.locals.document = document;
   return next();
 };
 
-export const findById = (req, res) => res.json(res.locals.entity);
+export const findById = (req, res) => res.json(res.locals.document);
 
 const pick = allowedKeys => object => {
   const entries = Object.entries(object);
@@ -53,27 +53,31 @@ const pick = allowedKeys => object => {
   return Object.fromEntries(filteredEntries);
 };
 
-export const bind = Model => {
+export const bind = (Model, { overwrite = false } = {}) => {
   const allowedKeys = Object.keys(Model.schema.obj);
   const sanitize = pick(allowedKeys);
   return async (req, res, next) => {
     const sanitizedBody = sanitize(req.body);
-    if (!res.locals.entity) {
-      // Entity is not loaded, create a new instance
-      res.locals.entity = new Model(sanitizedBody);
+    if (!res.locals.document) {
+      // Document is not loaded, create a new instance
+      res.locals.document = new Model(sanitizedBody);
       return next();
     }
-    // Update loaded entity with request body
-    // FIXME: this is valid for `PATCH` operations but we probably want to iterate over `allowedKeys` for `PUT` operations
-    res.locals.entity.set(sanitizedBody);
+    // Update loaded document with request body
+    if (overwrite) {
+      // FIXME: `overwrite` resets `createdAt`
+      res.locals.document.overwrite(sanitizedBody);
+    } else {
+      res.locals.document.set(sanitizedBody);
+    }
     return next();
   };
 };
 
 export const validate = async (req, res, next) => {
-  const { entity } = res.locals;
+  const { document } = res.locals;
   try {
-    await entity.validate();
+    await document.validate();
     return next();
   } catch (error) {
     return next(Boom.badData(error.message));
@@ -81,20 +85,20 @@ export const validate = async (req, res, next) => {
 };
 
 export const save = async (req, res, next) => {
-  const { entity } = res.locals;
-  const { isNew } = entity;
+  const { document } = res.locals;
+  const { isNew } = document;
   try {
-    await entity.save();
-    return isNew ? res.status(201).json(entity) : res.sendStatus(204);
+    await document.save();
+    return isNew ? res.status(201).json(document) : res.sendStatus(204);
   } catch (error) {
     return next(error);
   }
 };
 
 export const remove = async (req, res, next) => {
-  const { entity } = res.locals;
+  const { document } = res.locals;
   try {
-    await entity.remove();
+    await document.remove();
     return res.sendStatus(204);
   } catch (error) {
     return next(error);
