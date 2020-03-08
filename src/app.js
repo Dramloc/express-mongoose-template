@@ -7,6 +7,7 @@ import helmet from "helmet";
 import articlesRouter from "./articles/index.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { notFoundHandler } from "./utils/notFoundHandler.js";
+import { validationErrorHandler } from "./utils/validationErrorHandler.js";
 
 const app = express();
 
@@ -35,6 +36,8 @@ app.use("/api/v1/articles", articlesRouter);
 
 // Handle requests matching no routes.
 app.use(notFoundHandler);
+// Add validation error information
+app.use(validationErrorHandler);
 // Handle errors passed using `next(error)`.
 app.use(errorHandler);
 

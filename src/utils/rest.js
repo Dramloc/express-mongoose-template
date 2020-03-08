@@ -73,7 +73,7 @@ export const validate = ({ validate }) => async (req, res, next) => {
     await validate(res.locals.document);
     return next();
   } catch (error) {
-    return next(Boom.badData(error.message));
+    return next(Boom.badData(error.message, error));
   }
 };
 
