@@ -263,5 +263,14 @@ export const save = document => document.save();
  */
 export const remove = document => document.remove();
 
-/** @type {(id: string) => boolean} */
+/**
+ * Check if the given id a valid document object id
+ * @param {string} id The id to validate
+ * @returns {boolean} true if the id is a valid document object id, false otherwise
+ * @example
+ * ```js
+ * isIdValid("1") === false
+ * isIdValid("5e64c1d0c39f823bf8c8af93") === true
+ * ```
+ */
 export const isIdValid = id => mongoose.Types.ObjectId.isValid(id);
