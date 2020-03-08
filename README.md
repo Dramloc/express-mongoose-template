@@ -1,5 +1,7 @@
 # express-mongoose-template
 
+Simple template using express and mongoose for building REST APIs.
+
 ## Usage
 
 - Install dependencies:
