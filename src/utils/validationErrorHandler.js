@@ -4,7 +4,6 @@ export const validationErrorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
-  console.log(Boom.isBoom(err));
   if (!Boom.isBoom(err) || err.typeof !== Boom.badData) {
     return next(err);
   }
