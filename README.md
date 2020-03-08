@@ -26,7 +26,7 @@ Simple template using express and mongoose for building REST APIs.
 >
 > ```shell
 > yarn start:production
-> # This will launch the server with node.
+> # This will force the NODE_ENV environment variable to "production" and launch the server with node.
 > ```
 
 ## Configuration

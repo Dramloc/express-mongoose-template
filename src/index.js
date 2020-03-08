@@ -64,7 +64,7 @@ const startHTTPServer = async (app, options) => {
 
 /** @type {(app: http.RequestListener) => Promise<void>} */
 const startServer = async app => {
-  log.info(`Starting server`);
+  log.info("Starting server");
   try {
     await Promise.all([
       // Retrieve mongodb information from environement variables and connect to the database.
@@ -86,7 +86,7 @@ const startServer = async app => {
   } catch (error) {
     // If something fails during start up (http server or database connection),
     // we stop the server process.
-    log.error(`Failed to start server`, error);
+    log.error("Failed to start server", error);
     process.exit(1);
   }
 };
