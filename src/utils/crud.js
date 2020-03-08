@@ -19,24 +19,40 @@ import mongoose from "mongoose";
  * ```
  */
 
+/** @typedef {1 | 'asc' | 'ascending' | -1 | 'desc' | 'descending'} SortDirection */
 /**
  * @typedef SortParams
- * @property {string | {[key: string]: -1 | 1}} [sort=_id] A sort expression to sort results. See https://mongoosejs.com/docs/api.html#query_Query-sort for more details.
+ * @property {string | {[key: string]: SortDirection} | [string, SortDirection][]} [sort=_id] A sort expression to sort results. See https://github.com/aheckmann/mquery#sort for more details.
  * ```js
  * // Retrieve the results sorted by slug in ascending order
  * const resultsSortedBySlugAsc = await find(Article, { sort: "slug" });
- * // The following syntax can also be used:
+ * // The following syntaxes can also be used:
  * await find(Article, { sort: { slug: 1 } });
+ * await find(Article, { sort: { slug: 'asc' } });
+ * await find(Article, { sort: { slug: 'ascending' } });
+ * await find(Article, { sort: [['slug', 1]] });
+ * await find(Article, { sort: [['slug', 'asc']] });
+ * await find(Article, { sort: [['slug', 'ascending']] });
  *
  * // Retrieve the results sorted by slug in descending order
  * const resultsSortedBySlugDesc = await find(Article, { sort: "-slug" });
  * // The following syntax can also be used:
  * await find(Article, { sort: { slug: -1 } });
+ * await find(Article, { sort: { slug: 'desc' } });
+ * await find(Article, { sort: { slug: 'descending' } });
+ * await find(Article, { sort: [['slug', -1]] });
+ * await find(Article, { sort: [['slug', 'desc']] });
+ * await find(Article, { sort: [['slug', 'descending']] });
  *
  * // Retrieve the results sorted on multiple columns
  * const resultsSortedBySlugAscAndTitleDesc = await find(Article, { sort: "slug -title" });
  * // The following syntax can also be used:
  * await find(Article, { sort: { slug: 1, title: -1 } });
+ * await find(Article, { sort: { slug: 'asc', title: 'desc } });
+ * await find(Article, { sort: { slug: 'asc', title: 'descending' } });
+ * await find(Article, { sort: [['slug', 1], ['title', -1]] });
+ * await find(Article, { sort: [['slug', 'asc'], ['title', 'desc']] });
+ * await find(Article, { sort: [['slug', 'ascending'], ['title', 'descending']] });
  * ```
  */
 
