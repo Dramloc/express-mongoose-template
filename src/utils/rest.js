@@ -1,24 +1,9 @@
 import Boom from "@hapi/boom";
-import mongoose from "mongoose";
 
-export const find = Model => async (req, res, next) => {
+/** @type {<T> (options: { find: (req: import("express").Request) => [T[], number] | Promise<[T[], number]> }) => import("express").RequestHandler} */
+export const find = ({ find }) => async (req, res, next) => {
   try {
-    const {
-      limit = 20,
-      skip = 0,
-      sort,
-      select,
-      populate = "",
-      ...query
-    } = req.query;
-    const listQuery = Model.find(query)
-      .limit(Number(limit))
-      .skip(Number(skip))
-      .sort(sort)
-      .select(select)
-      .populate(populate);
-    const countQuery = Model.find(listQuery.getQuery()).countDocuments();
-    const [list, totalCount] = await Promise.all([listQuery, countQuery]);
+    const [list, totalCount] = await find(req);
     res.set("X-Total-Count", String(totalCount));
     return res.json(list);
   } catch (error) {
@@ -26,79 +11,86 @@ export const find = Model => async (req, res, next) => {
   }
 };
 
-export const validateId = (req, res, next, id) => {
-  if (mongoose.Types.ObjectId.isValid(id)) {
-    return next();
-  }
-  return next(Boom.badRequest(`Invalid id "${id}".`));
-};
-
-export const loadId = Model => async (req, res, next, id) => {
-  const { select, populate = "" } = req.query;
-  const document = await Model.findById(id)
-    .select(select)
-    .populate(populate);
-  if (!document) {
-    return next(Boom.notFound(`${Model.modelName} "${id}" not found.`));
-  }
-  res.locals.document = document;
-  return next();
-};
-
-export const findById = (req, res) => res.json(res.locals.document);
-
-const pick = allowedKeys => object => {
-  const entries = Object.entries(object);
-  const filteredEntries = entries.filter(([key]) => allowedKeys.includes(key));
-  return Object.fromEntries(filteredEntries);
-};
-
-export const bind = (Model, { overwrite = false } = {}) => {
-  const allowedKeys = Object.keys(Model.schema.obj);
-  const sanitize = pick(allowedKeys);
-  return async (req, res, next) => {
-    const sanitizedBody = sanitize(req.body);
-    if (!res.locals.document) {
-      // Document is not loaded, create a new instance
-      res.locals.document = new Model(sanitizedBody);
+/** @type {(options: { validate: (value: string, req: import("express").Request) => boolean | Promise<boolean> }) => import("express").RequestParamHandler} */
+export const validateParam = ({ validate }) => async (
+  req,
+  res,
+  next,
+  value,
+  name
+) => {
+  try {
+    const isValid = await validate(value, req);
+    if (isValid) {
       return next();
     }
-    // Update loaded document with request body
-    if (overwrite) {
-      // FIXME: `overwrite` resets `createdAt`
-      res.locals.document.overwrite(sanitizedBody);
-    } else {
-      res.locals.document.set(sanitizedBody);
-    }
-    return next();
-  };
+    return next(
+      Boom.badRequest(`Invalid parameter "${name}" with value "${value}".`)
+    );
+  } catch (error) {
+    return next(error);
+  }
 };
 
-export const validate = async (req, res, next) => {
-  const { document } = res.locals;
+/** @type {<T> (options: { load: (value: string, req: import("express").Request) => Promise<T>, modelName?: string }) => import("express").RequestParamHandler} */
+export const load = ({ load, modelName = "Document" }) => async (
+  req,
+  res,
+  next,
+  value,
+  name
+) => {
   try {
-    await document.validate();
+    const document = await load(value, req);
+    if (!document) {
+      return next(
+        Boom.notFound(`${modelName} with ${name} "${value}" not found.`)
+      );
+    }
+    res.locals.document = document;
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+/** @type {import("express").RequestHandler} */
+export const findById = (req, res) => res.json(res.locals.document);
+
+/** @type {<T> (options: { bind: (document: T, req: import("express").Request) => T | Promise<T> }) => import("express").RequestHandler} */
+export const bind = ({ bind }) => async (req, res, next) => {
+  try {
+    res.locals.document = await bind(res.locals.document, req);
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+/** @type {<T> (options: { validate: (document: T) => void | Promise<void> }) => import("express").RequestHandler} */
+export const validate = ({ validate }) => async (req, res, next) => {
+  try {
+    await validate(res.locals.document);
     return next();
   } catch (error) {
     return next(Boom.badData(error.message));
   }
 };
 
-export const save = async (req, res, next) => {
-  const { document } = res.locals;
-  const { isNew } = document;
+/** @type {<T> (options: { save: (document: T) => Promise<T>, isNew: boolean }) => import("express").RequestHandler} */
+export const save = ({ save, isNew }) => async (req, res, next) => {
   try {
-    await document.save();
-    return isNew ? res.status(201).json(document) : res.sendStatus(204);
+    const savedDocument = await save(res.locals.document);
+    return isNew ? res.status(201).json(savedDocument) : res.sendStatus(204);
   } catch (error) {
     return next(error);
   }
 };
 
-export const remove = async (req, res, next) => {
-  const { document } = res.locals;
+/** @type {<T> (options: { remove: (document: T) => any }) => import("express").RequestHandler} */
+export const remove = ({ remove }) => async (req, res, next) => {
   try {
-    await document.remove();
+    await remove(res.locals.document);
     return res.sendStatus(204);
   } catch (error) {
     return next(error);
