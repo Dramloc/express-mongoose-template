@@ -32,7 +32,7 @@ app.use(helmet());
 app.use(bodyParser.json());
 
 // Our application routes:
-app.use("/api/v1/articles", articlesRouter);
+app.use("/v1/articles", articlesRouter);
 
 // Handle requests matching no routes.
 app.use(notFoundHandler);
