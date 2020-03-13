@@ -4,9 +4,8 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:jest/recommended",
-    "prettier"
+    "plugin:prettier/recommended"
   ],
-  "plugins": ["import", "jest", "prettier"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2020
