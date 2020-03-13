@@ -82,7 +82,7 @@ export const validateParam = ({ handler }) => async (
  * ```js
  * router.param('id', load({ handler: (value) => findArticleById(value), documentKey: "article" }));
  * ```
-* @example
+ * @example
  * ```js
  * router.param('id', load({ handler: (value) => findArticleById(value), modelName: "Article" }));
  * ```

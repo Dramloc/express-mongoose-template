@@ -1,6 +1,5 @@
 import Boom from "@hapi/boom";
 
-
 /**
  * @typedef FormattedError
  * @property {number} statusCode The error HTTP status code (typically 4xx or 5xx)
