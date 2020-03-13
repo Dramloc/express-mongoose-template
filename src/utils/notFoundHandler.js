@@ -1,6 +1,9 @@
 import Boom from "@hapi/boom";
 
-export const notFoundHandler = (req, res) => {
-  const { output } = Boom.notFound(`Cannot ${req.method} ${req.url}`);
-  return res.status(output.statusCode).json(output.payload);
+/**
+ * Throws a 404 ("Not Found") if no middleware before itself handled the request.
+ * @type {import("express").RequestHandler}
+ */
+export const notFoundHandler = (req, res, next) => {
+  return next(Boom.notFound(`Cannot ${req.method} ${req.url}`));
 };
