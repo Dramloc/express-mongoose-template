@@ -26,11 +26,7 @@ export const validationErrorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
-  if (
-    !Boom.isBoom(err) ||
-    err.typeof !== Boom.badData ||
-    err.data.name !== "ValidationError"
-  ) {
+  if (!Boom.isBoom(err) || err.typeof !== Boom.badData || err.data.name !== "ValidationError") {
     return next(err);
   }
   const { output, data } = err;

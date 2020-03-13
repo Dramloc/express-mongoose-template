@@ -18,11 +18,7 @@ import Boom from "@hapi/boom";
  * router.route('/').get(find({ handler: (req) => findAllArticles(req.query), totalCountHeader: "Pagination-Count" }))
  * ```
  */
-export const find = ({ handler, totalCountHeader = "X-Total-Count" }) => async (
-  req,
-  res,
-  next
-) => {
+export const find = ({ handler, totalCountHeader = "X-Total-Count" }) => async (req, res, next) => {
   try {
     const [list, totalCount] = await handler(req);
     res.set(totalCountHeader, String(totalCount));
@@ -43,21 +39,13 @@ export const find = ({ handler, totalCountHeader = "X-Total-Count" }) => async (
  * router.param('id', validateParam({ handler: (value) => isParamaterValid(value) }))
  * ```
  */
-export const validateParam = ({ handler }) => async (
-  req,
-  res,
-  next,
-  value,
-  name
-) => {
+export const validateParam = ({ handler }) => async (req, res, next, value, name) => {
   try {
     const isValid = await handler(value, req);
     if (isValid) {
       return next();
     }
-    return next(
-      Boom.badRequest(`Invalid parameter "${name}" with value "${value}".`)
-    );
+    return next(Boom.badRequest(`Invalid parameter "${name}" with value "${value}".`));
   } catch (error) {
     return next(error);
   }
@@ -87,17 +75,17 @@ export const validateParam = ({ handler }) => async (
  * router.param('id', load({ handler: (value) => findArticleById(value), modelName: "Article" }));
  * ```
  */
-export const load = ({
-  handler,
-  modelName = "Document",
-  documentKey = "document"
-}) => async (req, res, next, value, name) => {
+export const load = ({ handler, modelName = "Document", documentKey = "document" }) => async (
+  req,
+  res,
+  next,
+  value,
+  name
+) => {
   try {
     const document = await handler(value, req);
     if (!document) {
-      return next(
-        Boom.notFound(`${modelName} with ${name} "${value}" not found.`)
-      );
+      return next(Boom.notFound(`${modelName} with ${name} "${value}" not found.`));
     }
     res.locals[documentKey] = document;
     return next();
@@ -147,11 +135,7 @@ export const findById = ({ documentKey = "document" } = {}) => (req, res) =>
  * router.route('/:id').put(bind({ handler: (document, req) => updateArticle(document, req.body), documentKey: 'article' }));
  * ```
  */
-export const bind = ({ handler, documentKey = "document" }) => async (
-  req,
-  res,
-  next
-) => {
+export const bind = ({ handler, documentKey = "document" }) => async (req, res, next) => {
   try {
     res.locals[documentKey] = await handler(res.locals[documentKey], req);
     return next();
@@ -200,11 +184,7 @@ export const bind = ({ handler, documentKey = "document" }) => async (
  * );
  * ```
  */
-export const validate = ({ handler, documentKey = "document" }) => async (
-  req,
-  res,
-  next
-) => {
+export const validate = ({ handler, documentKey = "document" }) => async (req, res, next) => {
   try {
     await handler(res.locals[documentKey]);
     return next();
@@ -258,11 +238,7 @@ export const validate = ({ handler, documentKey = "document" }) => async (
  * );
  * ```
  */
-export const save = ({ handler, isNew, documentKey = "document" }) => async (
-  req,
-  res,
-  next
-) => {
+export const save = ({ handler, isNew, documentKey = "document" }) => async (req, res, next) => {
   try {
     const savedDocument = await handler(res.locals[documentKey]);
     return isNew ? res.status(201).json(savedDocument) : res.sendStatus(204);
@@ -294,11 +270,7 @@ export const save = ({ handler, isNew, documentKey = "document" }) => async (
  * );
  * ```
  */
-export const remove = ({ handler, documentKey = "document" }) => async (
-  req,
-  res,
-  next
-) => {
+export const remove = ({ handler, documentKey = "document" }) => async (req, res, next) => {
   try {
     await handler(res.locals[documentKey]);
     return res.sendStatus(204);

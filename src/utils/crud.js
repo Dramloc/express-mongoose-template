@@ -206,8 +206,7 @@ const sanitize = (schema, body) => {
  * const document = create(Article, { slug: "my-article", title: "My Article" });
  * ```
  */
-export const create = (Model, payload) =>
-  new Model(sanitize(Model.schema, payload));
+export const create = (Model, payload) => new Model(sanitize(Model.schema, payload));
 
 /**
  * Update a document with the given payload. All values are overwritten, except for immutable properties.
@@ -244,8 +243,7 @@ export const update = (document, payload) => {
  * const patchedDocument = patch(document, { slug: "my-new-article" })
  * ```
  */
-export const patch = (document, payload) =>
-  document.set(sanitize(document.schema, payload));
+export const patch = (document, payload) => document.set(sanitize(document.schema, payload));
 
 /**
  * Saves the given document.

@@ -33,9 +33,7 @@ const connectToDatabase = async (url, options) => {
       await mongoose.connection.close();
       log.info(`Disconnected from database ${url}`);
     };
-    process
-      .once("SIGINT", disconnectFromDatabase)
-      .once("SIGTERM", disconnectFromDatabase);
+    process.once("SIGINT", disconnectFromDatabase).once("SIGTERM", disconnectFromDatabase);
 
     log.info(`Connected to database "${url}"`);
   } catch (error) {
