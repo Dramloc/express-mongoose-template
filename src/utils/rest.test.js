@@ -1,6 +1,6 @@
 import Boom from "@hapi/boom";
 import { Request, Response } from "jest-express";
-import { find, validateParam } from "./rest.js";
+import { find, validateParam, load } from "./rest.js";
 
 describe("find", () => {
   it("should return the list of documents returned by the handler as json", async () => {
@@ -160,5 +160,105 @@ describe("validateParam", () => {
     expect(next).toHaveBeenCalledWith(
       Boom.badRequest('Invalid parameter `param name` with value `{"foo":"foo","bar":"bar"}`.')
     );
+  });
+});
+
+describe("load", () => {
+  it("should call the given handler and store the result in an express locals", async () => {
+    const handler = () => ({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(res.locals.document).toEqual({ test: "document" });
+  });
+
+  it("should call the given handler with the param value and the request", async () => {
+    const handler = jest.fn(() => ({ test: "document" }));
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(handler).toHaveBeenCalledWith("some value", req);
+  });
+
+  it("should return a 404 if the handler returns a falsy value", async () => {
+    const handler = () => null;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(next).toHaveBeenCalledWith(
+      Boom.notFound(`Document with \`some param\` matching \`some value\` not found.`)
+    );
+  });
+
+  it("should not store anything if the handler returns a falsy value", async () => {
+    const handler = () => null;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(res.locals.document).toBeUndefined();
+  });
+
+  it("should allow error message to be customized to match the document model name", async () => {
+    const handler = () => null;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler, modelName: "Something" })(req, res, next, "some value", "some param");
+
+    expect(next).toHaveBeenCalledWith(
+      Boom.notFound(`Something with \`some param\` matching \`some value\` not found.`)
+    );
+  });
+
+  it("should allow document to be stored at a different locals key", async () => {
+    const handler = () => ({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler, documentKey: "anotherKey" })(req, res, next, "some value", "some param");
+
+    expect(res.locals.anotherKey).toEqual({ test: "document" });
+    expect(res.locals.document).toBeUndefined();
+  });
+
+  it("should call the next function if a document is found", async () => {
+    const handler = () => ({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it("should allow the handler to resolve the document with a promise", async () => {
+    const handler = () => Promise.resolve({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(res.locals.document).toEqual({ test: "document" });
+  });
+
+  it("should allow the handler to resolve with no document with a promise", async () => {
+    const handler = () => Promise.resolve(null);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(next).toHaveBeenCalledWith(
+      Boom.notFound(`Document with \`some param\` matching \`some value\` not found.`)
+    );
+  });
+
+  it("should forwards the error if the handler rejects", async () => {
+    const err = new Error("handler rejection");
+    const handler = () => Promise.reject(err);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await load({ handler })(req, res, next, "some value", "some param");
+
+    expect(next).toHaveBeenCalledWith(err);
   });
 });

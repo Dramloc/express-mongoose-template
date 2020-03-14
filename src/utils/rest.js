@@ -87,7 +87,7 @@ export const load = ({ handler, modelName = "Document", documentKey = "document"
   try {
     const document = await handler(value, req);
     if (!document) {
-      return next(Boom.notFound(`${modelName} with ${name} "${value}" not found.`));
+      return next(Boom.notFound(`${modelName} with \`${name}\` matching \`${value}\` not found.`));
     }
     res.locals[documentKey] = document;
     return next();
