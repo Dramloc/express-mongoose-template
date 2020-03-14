@@ -45,7 +45,9 @@ export const validateParam = ({ handler }) => async (req, res, next, value, name
     if (isValid) {
       return next();
     }
-    return next(Boom.badRequest(`Invalid parameter "${name}" with value "${value}".`));
+    return next(
+      Boom.badRequest(`Invalid parameter \`${name}\` with value \`${JSON.stringify(value)}\`.`)
+    );
   } catch (error) {
     return next(error);
   }

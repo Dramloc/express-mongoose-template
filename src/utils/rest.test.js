@@ -1,5 +1,6 @@
+import Boom from "@hapi/boom";
 import { Request, Response } from "jest-express";
-import { find } from "./rest.js";
+import { find, validateParam } from "./rest.js";
 
 describe("find", () => {
   it("should return the list of documents returned by the handler as json", async () => {
@@ -73,5 +74,91 @@ describe("find", () => {
     await find({ handler })(req, res, next);
 
     expect(next).toHaveBeenCalledWith(err);
+  });
+});
+
+describe("validateParam", () => {
+  it("should continue to the next middleware if the handler validates the param", async () => {
+    const handler = () => true;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it("should allow the handler to resolve to true with a promise", async () => {
+    const handler = () => Promise.resolve(true);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it("should forward an error if the handler does not validate the param", async () => {
+    const handler = () => false;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next, "invalid value", "param name");
+
+    expect(next).toHaveBeenCalledWith(
+      Boom.badRequest('Invalid parameter `param name` with value `"invalid value"`.')
+    );
+  });
+
+  it("should allow the handler to resolve to false with a promise", async () => {
+    const handler = () => Promise.resolve(false);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next, "invalid value", "param name");
+
+    expect(next).toHaveBeenCalledWith(
+      Boom.badRequest('Invalid parameter `param name` with value `"invalid value"`.')
+    );
+  });
+
+  it("should allow the handler to throw to invalidate the param", async () => {
+    const err = new Error("invalid param");
+    const handler = () => {
+      throw err;
+    };
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next, "invalid value", "param name");
+
+    expect(next).toHaveBeenCalledWith(err);
+  });
+
+  it("should allow the handler to reject with a promise to invalidate the param", async () => {
+    const err = new Error("invalid param");
+    const handler = () => Promise.reject(err);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next, "invalid value", "param name");
+
+    expect(next).toHaveBeenCalledWith(err);
+  });
+
+  it("should format the error message correctly for arrays", async () => {
+    const handler = () => false;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next, ["foo", "bar"], "param name");
+
+    expect(next).toHaveBeenCalledWith(
+      Boom.badRequest('Invalid parameter `param name` with value `["foo","bar"]`.')
+    );
+  });
+
+  it("should format the error message correctly for objects", async () => {
+    const handler = () => false;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validateParam({ handler })(req, res, next, { foo: "foo", bar: "bar" }, "param name");
+
+    expect(next).toHaveBeenCalledWith(
+      Boom.badRequest('Invalid parameter `param name` with value `{"foo":"foo","bar":"bar"}`.')
+    );
   });
 });
