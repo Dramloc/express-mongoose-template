@@ -1,6 +1,6 @@
 import Boom from "@hapi/boom";
 import { Request, Response } from "jest-express";
-import { find, findById, load, validateParam } from "./rest.js";
+import { find, findById, load, validateParam, bind } from "./rest.js";
 
 describe("find", () => {
   it("should return the list of documents returned by the handler as json", async () => {
@@ -289,5 +289,65 @@ describe("findById", () => {
     findById()(req, res, next);
 
     expect(res.body).toBeUndefined();
+  });
+});
+
+describe("bind", () => {
+  it("should call the handler with the document stored in express locals and the request", async () => {
+    const handler = jest.fn(document => document);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+    const document = { test: "document" };
+    res.setLocals("document", document);
+
+    await bind({ handler })(req, res, next);
+
+    expect(handler).toHaveBeenCalledWith(document, req);
+  });
+
+  it("should store the handler result in the express locals", async () => {
+    const handler = () => ({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await bind({ handler })(req, res, next);
+
+    expect(res.locals.document).toEqual({ test: "document" });
+  });
+
+  it("should allow another locals key to be used", async () => {
+    const handler = () => ({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await bind({ handler, documentKey: "anotherKey" })(req, res, next);
+
+    expect(res.locals.anotherKey).toEqual({ test: "document" });
+    expect(res.locals.document).toBeUndefined();
+  });
+
+  it("should call next once the handler resolved", async () => {
+    const handler = () => ({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await bind({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it("should allow the handler to resolve with a promise", async () => {
+    const handler = () => Promise.resolve({ test: "document" });
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await bind({ handler })(req, res, next);
+
+    expect(res.locals.document).toEqual({ test: "document" });
+  });
+
+  it("should forwards the error if the handler rejects", async () => {
+    const err = new Error("bind error");
+    const handler = () => Promise.reject(err);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await bind({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(err);
   });
 });
