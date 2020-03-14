@@ -7,10 +7,10 @@
   "scripts": {
     "start": "if-env NODE_ENV=production && yarn start:production || npm run start:development",
     "start:development": "nodemon --exec \"babel-node src/index.js | pino-pretty\"",
-    "build": "babel src --out-dir dist",
+    "build": "rimraf dist && babel src --out-dir dist --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
     "prestart:production": "yarn build",
     "start:production": "cross-env NODE_ENV=production node dist/index.js",
-    "test": "jest",
+    "test": "is-ci && jest --ci || jest --watch",
     "lint": "eslint src",
     "format": "prettier --write src/**/*.js"
   },
@@ -19,7 +19,6 @@
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-pino-logger": "^4.0.0",
@@ -33,16 +32,19 @@
     "@babel/core": "^7.8.7",
     "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
+    "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.8.2",
     "eslint-plugin-prettier": "^3.1.2",
     "if-env": "^1.0.4",
+    "is-ci": "^2.0.0",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
     "pino-pretty": "^3.6.1",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.2"
   },
   "babel": {
     "presets": [
@@ -75,5 +77,8 @@
   },
   "prettier": {
     "printWidth": 100
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
