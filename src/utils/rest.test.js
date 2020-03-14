@@ -1,6 +1,6 @@
 import Boom from "@hapi/boom";
 import { Request, Response } from "jest-express";
-import { find, findById, load, validateParam, bind } from "./rest.js";
+import { bind, find, findById, load, validate, validateParam } from "./rest.js";
 
 describe("find", () => {
   it("should return the list of documents returned by the handler as json", async () => {
@@ -349,5 +349,57 @@ describe("bind", () => {
     await bind({ handler })(req, res, next);
 
     expect(next).toHaveBeenCalledWith(err);
+  });
+});
+
+describe("validate", () => {
+  it("should call the handler with the document stored in express locals", async () => {
+    const handler = jest.fn(() => {});
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+    const document = { test: "document" };
+    res.setLocals("document", document);
+
+    await validate({ handler })(req, res, next);
+
+    expect(handler).toHaveBeenCalledWith(document);
+  });
+
+  it("should allow another locals key to be used", async () => {
+    const handler = jest.fn(() => {});
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+    const document = { test: "document" };
+    res.setLocals("anotherKey", document);
+
+    await validate({ handler, documentKey: "anotherKey" })(req, res, next);
+
+    expect(handler).toHaveBeenCalledWith(document);
+  });
+
+  it("should call next once the handler resolved", async () => {
+    const handler = () => {};
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validate({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it("should allow the handler to resolve with a promise", async () => {
+    const handler = () => Promise.resolve();
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validate({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it("should return a validation if the handler rejects", async () => {
+    const err = new Error("validation error");
+    const handler = () => Promise.reject(err);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await validate({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(Boom.badData("validation error", err));
   });
 });
