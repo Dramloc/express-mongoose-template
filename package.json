@@ -11,7 +11,7 @@
     "build": "babel src --out-dir dist --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
     "prestart:production": "yarn build",
     "start:production": "cross-env NODE_ENV=production node dist/index.js",
-    "test": "is-ci && jest --ci || jest --watch",
+    "test": "is-ci && jest --ci || jest --watchAll",
     "lint": "eslint src",
     "format": "prettier --write src/**/*.js"
   },
@@ -43,6 +43,7 @@
     "is-ci": "^2.0.0",
     "jest": "^25.1.0",
     "jest-express": "^1.11.3",
+    "jest-runner-eslint": "^0.7.6",
     "nodemon": "^2.0.2",
     "pino-pretty": "^3.6.1",
     "prettier": "^1.19.1",
@@ -81,6 +82,22 @@
     "printWidth": 100
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "projects": [
+      {
+        "displayName": "test"
+      },
+      {
+        "runner": "jest-runner-eslint",
+        "displayName": "lint",
+        "testMatch": [
+          "<rootDir>/src/**/*.js"
+        ]
+      }
+    ]
   }
 }
