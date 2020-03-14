@@ -7,7 +7,8 @@
   "scripts": {
     "start": "if-env NODE_ENV=production && yarn start:production || npm run start:development",
     "start:development": "nodemon --exec \"babel-node src/index.js | pino-pretty\"",
-    "build": "rimraf dist && babel src --out-dir dist --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
+    "prebuild": "rimraf dist",
+    "build": "babel src --out-dir dist --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
     "prestart:production": "yarn build",
     "start:production": "cross-env NODE_ENV=production node dist/index.js",
     "test": "is-ci && jest --ci || jest --watch",
