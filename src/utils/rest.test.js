@@ -393,7 +393,7 @@ describe("validate", () => {
     expect(next).toHaveBeenCalledWith();
   });
 
-  it("should return a validation if the handler rejects", async () => {
+  it("should return a validation error if the handler rejects", async () => {
     const err = new Error("validation error");
     const handler = () => Promise.reject(err);
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
