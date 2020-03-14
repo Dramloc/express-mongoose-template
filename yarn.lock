@@ -3636,6 +3636,13 @@ jest-environment-node@^25.1.0:
     jest-mock "^25.1.0"
     jest-util "^25.1.0"
 
+jest-express@^1.11.3:
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/jest-express/-/jest-express-1.11.3.tgz#7a6d0033c4ab60bb544210b04ef992d9edb733fd"
+  integrity sha512-+zDimqXGXvoilhyrJUXCLYxKMAUPLnDhRyt4HaL4BybMaZxHKNpNBYfiQ9CPtLG7cPD/sxSv1saNJ51YVFqsUA==
+  dependencies:
+    jest-node-http "1.0.0"
+
 jest-get-type@^25.1.0:
   version "25.1.0"
   resolved "https://registry.yarnpkg.com/jest-get-type/-/jest-get-type-25.1.0.tgz#1cfe5fc34f148dc3a8a3b7275f6b9ce9e2e8a876"
@@ -3720,6 +3727,11 @@ jest-mock@^25.1.0:
   integrity sha512-28/u0sqS+42vIfcd1mlcg4ZVDmSUYuNvImP4X2lX5hRMLW+CN0BeiKVD4p+ujKKbSPKd3rg/zuhCF+QBLJ4vag==
   dependencies:
     "@jest/types" "^25.1.0"
+
+jest-node-http@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/jest-node-http/-/jest-node-http-1.0.0.tgz#f692b0e3abfafd49b74a1953369478b59c9973b1"
+  integrity sha512-WcO1nqqkgwZ4sHAJ90YGqOiFYFkDm9eP8HsBwadedlJaF2T5JHM1BmnpskHDDlB3B4JzRl6CJgOpSOAOwoRfhQ==
 
 jest-pnp-resolver@^1.2.1:
   version "1.2.1"
