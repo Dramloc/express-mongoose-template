@@ -1,6 +1,6 @@
 import Boom from "@hapi/boom";
 import { Request, Response } from "jest-express";
-import { find, validateParam, load } from "./rest.js";
+import { find, findById, load, validateParam } from "./rest.js";
 
 describe("find", () => {
   it("should return the list of documents returned by the handler as json", async () => {
@@ -260,5 +260,34 @@ describe("load", () => {
     await load({ handler })(req, res, next, "some value", "some param");
 
     expect(next).toHaveBeenCalledWith(err);
+  });
+});
+
+describe("findById", () => {
+  it("should respond a stored express local", () => {
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+    res.setLocals("document", { test: "document" });
+
+    findById()(req, res, next);
+
+    expect(res.body).toEqual({ test: "document" });
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it("should allow another local key to be used", () => {
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+    res.setLocals("anotherKey", { test: "document" });
+
+    findById({ documentKey: "anotherKey" })(req, res, next);
+
+    expect(res.body).toEqual({ test: "document" });
+  });
+
+  it("should respond with undefined if there is no stored express local", () => {
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    findById()(req, res, next);
+
+    expect(res.body).toBeUndefined();
   });
 });
