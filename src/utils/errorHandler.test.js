@@ -30,4 +30,13 @@ describe("errorHandler", () => {
     });
     expect(res.statusCode).toEqual(500);
   });
+
+  it("should continue if there is no error", () => {
+    const err = undefined;
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    errorHandler(err, req, res, next);
+
+    expect(next).toHaveBeenCalledWith();
+  });
 });
