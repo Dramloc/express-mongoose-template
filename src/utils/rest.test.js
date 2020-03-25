@@ -1,6 +1,6 @@
 import Boom from "@hapi/boom";
 import { Request, Response } from "jest-express";
-import { bind, find, findById, load, validate, validateParam } from "./rest.js";
+import { bind, find, findById, load, save, validate, validateParam } from "./rest.js";
 
 describe("find", () => {
   it("should return the list of documents returned by the handler as json", async () => {
@@ -401,5 +401,71 @@ describe("validate", () => {
     await validate({ handler })(req, res, next);
 
     expect(next).toHaveBeenCalledWith(Boom.badData("validation error", err));
+  });
+});
+
+describe("save", () => {
+  it("should call the handler with the document stored in express locals", async () => {
+    const handler = jest.fn(() => {});
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+    const document = { test: "document" };
+    res.setLocals("document", document);
+
+    await save({ handler })(req, res, next);
+
+    expect(handler).toHaveBeenCalledWith(document);
+  });
+
+  it("should allow another locals key to be used", async () => {
+    const handler = jest.fn(() => {});
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+    const document = { test: "document" };
+    res.setLocals("anotherKey", document);
+
+    await save({ handler, documentKey: "anotherKey" })(req, res, next);
+
+    expect(handler).toHaveBeenCalledWith(document);
+  });
+
+  it("should return a 204 if `isNew` is false", async () => {
+    const handler = jest.fn(() => ({ test: "document" }));
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await save({ handler, isNew: false })(req, res, next);
+
+    expect(res.sendStatus).toHaveBeenCalledWith(204);
+  });
+
+  it("should return a 201 and the document body if `isNew` is true", async () => {
+    const document = { test: "document" };
+    const handler = jest.fn(() => document);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await save({ handler, isNew: true })(req, res, next);
+
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toEqual(document);
+  });
+
+  it("should allow the handler to resolve with a promise", async () => {
+    const document = { test: "document" };
+    const handler = () => Promise.resolve(document);
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await save({ handler })(req, res, next);
+
+    expect(res.sendStatus).toHaveBeenCalledWith(204);
+  });
+
+  it("should forward errors thrown by the handler using the next function", async () => {
+    const err = new Error();
+    const handler = () => {
+      throw err;
+    };
+    const [req, res, next] = [new Request(), new Response(), jest.fn()];
+
+    await save({ handler })(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(err);
   });
 });
