@@ -4,10 +4,10 @@ import cors from "cors";
 import express from "express";
 import pino from "express-pino-logger";
 import helmet from "helmet";
-import articlesRouter from "./articles/index.js";
-import { errorHandler } from "./utils/errorHandler.js";
-import { notFoundHandler } from "./utils/notFoundHandler.js";
-import { validationErrorHandler } from "./utils/validationErrorHandler.js";
+import articlesRouter from "./articles";
+import { errorHandler } from "./utils/errorHandler";
+import { notFoundHandler } from "./utils/notFoundHandler";
+import { validationErrorHandler } from "./utils/validationErrorHandler";
 
 const app = express();
 

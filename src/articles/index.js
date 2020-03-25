@@ -1,7 +1,7 @@
 import express from "express";
-import * as crud from "../utils/crud.js";
-import * as rest from "../utils/rest.js";
-import { Article } from "./Article.js";
+import * as crud from "../utils/crud";
+import * as rest from "../utils/rest";
+import { Article } from "./Article";
 
 const router = express.Router();
 

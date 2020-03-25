@@ -1,6 +1,6 @@
 import Boom from "@hapi/boom";
 import { Request, Response } from "jest-express";
-import { bind, find, findById, load, remove, save, validate, validateParam } from "./rest.js";
+import { bind, find, findById, load, remove, save, validate, validateParam } from "./rest";
 
 describe("find", () => {
   it("should return the list of documents returned by the handler as json", async () => {

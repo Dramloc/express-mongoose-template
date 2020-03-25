@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import http from "http";
 import mongoose from "mongoose";
 import pino from "pino";
-import app from "./app.js";
+import app from "./app";
 
 // Inject environment variables defined in the `.env` file placed at the root of the project.
 dotenv.config();
