@@ -5,5 +5,5 @@ import Boom from "@hapi/boom";
  * @type {import("express").RequestHandler}
  */
 export const notFoundHandler = (req, res, next) => {
-  return next(Boom.notFound(`Cannot ${req.method} ${req.url}`));
+  return next(Boom.notFound(`Cannot ${req.method} ${req.path}`));
 };
