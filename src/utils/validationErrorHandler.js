@@ -6,6 +6,7 @@ import Boom from "@hapi/boom";
  * @property {string} type The validation error type (e.g.: "required", "unique", etc.)
  * @property {string} path The document path that failed validation
  * @property {any} [value] The value that did not pass validation (used by mongoose-unique-validator)
+ * @property {any} [reason] The reason why value did not pass validation.
  */
 
 /**
@@ -26,7 +27,12 @@ export const validationErrorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
-  if (!Boom.isBoom(err) || err.typeof !== Boom.badData || err.data.name !== "ValidationError") {
+  if (
+    !Boom.isBoom(err) ||
+    err.typeof !== Boom.badData ||
+    err.data === null ||
+    err.data.name !== "ValidationError"
+  ) {
     return next(err);
   }
   const { output, data } = err;
