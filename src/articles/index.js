@@ -39,6 +39,6 @@ router
     rest.validate({ handler: crud.validate }),
     rest.save({ handler: crud.save, isNew: false })
   )
-  .delete(rest.remove({ remove: crud.remove }));
+  .delete(rest.remove({ handler: crud.remove }));
 
 export default router;
