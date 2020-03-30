@@ -193,13 +193,13 @@ describe("load", () => {
     );
   });
 
-  it("should not store anything if the handler returns a falsy value", async () => {
+  it("should store the handler falsy value in the express locals", async () => {
     const handler = () => null;
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
 
     await load({ handler })(req, res, next, "some value", "some param");
 
-    expect(res.locals.document).toBeUndefined();
+    expect(res.locals.document).toBe(null);
   });
 
   it("should allow error message to be customized to match the document model name", async () => {

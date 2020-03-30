@@ -1,5 +1,14 @@
 import Boom from "@hapi/boom";
 
+/** @type {<T extends import("express").RequestHandler | import("express").RequestParamHandler> (handler: T) => T} */
+const forwardError = handler => async (req, res, next, ...args) => {
+  try {
+    return await handler(req, res, next, ...args);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 /**
  * Execute `handler` to retrieve a list of document and the total count of documents in this collection.
  * It will then add the resulting collection document to the response header (`X-Total-Count` by default),
@@ -18,15 +27,12 @@ import Boom from "@hapi/boom";
  * router.route('/').get(find({ handler: (req) => findAllArticles(req.query), totalCountHeader: "Pagination-Count" }))
  * ```
  */
-export const find = ({ handler, totalCountHeader = "X-Total-Count" }) => async (req, res, next) => {
-  try {
+export const find = ({ handler, totalCountHeader = "X-Total-Count" }) =>
+  forwardError(async (req, res) => {
     const [list, totalCount] = await handler(req);
     res.set(totalCountHeader, String(totalCount));
     return res.json(list);
-  } catch (error) {
-    return next(error);
-  }
-};
+  });
 
 /**
  * Validate an express parameter with the given handler.
@@ -39,19 +45,15 @@ export const find = ({ handler, totalCountHeader = "X-Total-Count" }) => async (
  * router.param('id', validateParam({ handler: (value) => isParamaterValid(value) }))
  * ```
  */
-export const validateParam = ({ handler }) => async (req, res, next, value, name) => {
-  try {
+export const validateParam = ({ handler }) =>
+  forwardError(async (req, res, next, value, name) => {
     const isValid = await handler(value, req);
-    if (isValid) {
-      return next();
-    }
-    return next(
-      Boom.badRequest(`Invalid parameter \`${name}\` with value \`${JSON.stringify(value)}\`.`)
-    );
-  } catch (error) {
-    return next(error);
-  }
-};
+    return isValid
+      ? next()
+      : next(
+          Boom.badRequest(`Invalid parameter \`${name}\` with value \`${JSON.stringify(value)}\`.`)
+        );
+  });
 
 /**
  * Load a document in the express locals using the given handler.
@@ -77,24 +79,13 @@ export const validateParam = ({ handler }) => async (req, res, next, value, name
  * router.param('id', load({ handler: (value) => findArticleById(value), modelName: "Article" }));
  * ```
  */
-export const load = ({ handler, modelName = "Document", documentKey = "document" }) => async (
-  req,
-  res,
-  next,
-  value,
-  name
-) => {
-  try {
-    const document = await handler(value, req);
-    if (!document) {
-      return next(Boom.notFound(`${modelName} with \`${name}\` matching \`${value}\` not found.`));
-    }
-    res.locals[documentKey] = document;
-    return next();
-  } catch (error) {
-    return next(error);
-  }
-};
+export const load = ({ handler, modelName = "Document", documentKey = "document" }) =>
+  forwardError(async (req, res, next, value, name) => {
+    res.locals[documentKey] = await handler(value, req);
+    return res.locals[documentKey]
+      ? next()
+      : next(Boom.notFound(`${modelName} with \`${name}\` matching \`${value}\` not found.`));
+  });
 
 /**
  * Outputs the express locals with given key.
@@ -137,14 +128,11 @@ export const findById = ({ documentKey = "document" } = {}) => (req, res) =>
  * router.route('/:id').put(bind({ handler: (document, req) => updateArticle(document, req.body), documentKey: 'article' }));
  * ```
  */
-export const bind = ({ handler, documentKey = "document" }) => async (req, res, next) => {
-  try {
+export const bind = ({ handler, documentKey = "document" }) =>
+  forwardError(async (req, res, next) => {
     res.locals[documentKey] = await handler(res.locals[documentKey], req);
     return next();
-  } catch (error) {
-    return next(error);
-  }
-};
+  });
 
 /**
  * Validates the document stored in the express locals with the given handler.
@@ -186,14 +174,11 @@ export const bind = ({ handler, documentKey = "document" }) => async (req, res, 
  * );
  * ```
  */
-export const validate = ({ handler, documentKey = "document" }) => async (req, res, next) => {
-  try {
+export const validate = ({ handler, documentKey = "document" }) =>
+  forwardError(async (req, res, next) => {
     await handler(res.locals[documentKey]);
     return next();
-  } catch (error) {
-    return next(Boom.badData(error.message, error));
-  }
-};
+  });
 
 /**
  * Saves the document stored in the express locals with the given handler.
@@ -240,14 +225,11 @@ export const validate = ({ handler, documentKey = "document" }) => async (req, r
  * );
  * ```
  */
-export const save = ({ handler, isNew, documentKey = "document" }) => async (req, res, next) => {
-  try {
+export const save = ({ handler, isNew, documentKey = "document" }) =>
+  forwardError(async (req, res) => {
     const savedDocument = await handler(res.locals[documentKey]);
     return isNew ? res.status(201).json(savedDocument) : res.sendStatus(204);
-  } catch (error) {
-    return next(error);
-  }
-};
+  });
 
 /**
  * Saves the document stored in the express locals with the given handler.
@@ -272,11 +254,8 @@ export const save = ({ handler, isNew, documentKey = "document" }) => async (req
  * );
  * ```
  */
-export const remove = ({ handler, documentKey = "document" }) => async (req, res, next) => {
-  try {
+export const remove = ({ handler, documentKey = "document" }) =>
+  forwardError(async (req, res) => {
     await handler(res.locals[documentKey]);
     return res.sendStatus(204);
-  } catch (error) {
-    return next(error);
-  }
-};
+  });

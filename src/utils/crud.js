@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Boom from "@hapi/boom";
 
 /**
  * @typedef PaginationParams
@@ -181,7 +182,13 @@ export const findById = async (Model, id, { select, populate = "" } = {}) => {
  * }
  * ```
  */
-export const validate = document => document.validate();
+export const validate = document => {
+  try {
+    return document.validate();
+  } catch (error) {
+    throw new Boom.badData(error.message, error);
+  }
+};
 
 const pick = (allowedKeys, object) => {
   const entries = Object.entries(object);
