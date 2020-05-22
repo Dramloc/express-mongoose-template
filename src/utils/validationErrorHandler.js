@@ -1,5 +1,3 @@
-import Boom from "@hapi/boom";
-
 /**
  * @typedef ValidationErrorMeta
  * @property {string} message The validation error message
@@ -8,6 +6,8 @@ import Boom from "@hapi/boom";
  * @property {any} [value] The value that did not pass validation (used by mongoose-unique-validator)
  * @property {any} [reason] The reason why value did not pass validation.
  */
+
+import Boom from "@hapi/boom";
 
 /**
  * @typedef FormattedValidationError
@@ -27,19 +27,14 @@ export const validationErrorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
-  if (
-    !Boom.isBoom(err) ||
-    err.typeof !== Boom.badData ||
-    err.data === null ||
-    err.data.name !== "ValidationError"
-  ) {
+  if (err.name !== "ValidationError") {
     return next(err);
   }
-  const { output, data } = err;
+  const { output } = Boom.badData(err);
   return res.status(output.statusCode).json({
     ...output.payload,
     meta: Object.fromEntries(
-      Object.entries(data.errors).map(([key, value]) => [key, value.properties])
+      Object.entries(err.errors).map(([key, value]) => [key, value.properties])
     )
   });
 };

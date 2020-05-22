@@ -5,8 +5,8 @@ import { validationErrorHandler } from "./validationErrorHandler";
 
 describe("validationErrorHandler", () => {
   it("should format Boom.badData errors that contain a mongoose validation error correctly", () => {
-    const validationError = new mongoose.Error.ValidationError();
-    validationError.addError(
+    const err = new mongoose.Error.ValidationError();
+    err.addError(
       "validatedPath",
       new mongoose.Error.ValidatorError({
         message: "validationErrorMessage",
@@ -16,7 +16,6 @@ describe("validationErrorHandler", () => {
         reason: "validationErrorReason"
       })
     );
-    const err = Boom.badData("Validation error", validationError);
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
 
     validationErrorHandler(err, req, res, next);
@@ -24,7 +23,7 @@ describe("validationErrorHandler", () => {
     expect(res.body).toEqual({
       error: "Unprocessable Entity",
       statusCode: 422,
-      message: "Validation error",
+      message: "Validation failed: validatedPath: validationErrorMessage",
       meta: {
         validatedPath: {
           message: "validationErrorMessage",
