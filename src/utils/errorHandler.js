@@ -1,7 +1,4 @@
 import Boom from "@hapi/boom";
-import pino from "pino";
-
-const log = pino({ name: "error" });
 
 /**
  * @typedef FormattedError
@@ -21,7 +18,7 @@ export const errorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
-  log.error(err.stack);
+  console.error(err.stack);
   const { output } = Boom.boomify(err);
   return res.set(output.headers).status(output.statusCode).json(output.payload);
 };

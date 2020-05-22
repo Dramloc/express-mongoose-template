@@ -2,8 +2,8 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
 import express from "express";
-import pino from "express-pino-logger";
 import helmet from "helmet";
+import morgan from "morgan";
 import articlesRouter from "./articles";
 import { errorHandler } from "./utils/errorHandler";
 import { notFoundHandler } from "./utils/notFoundHandler";
@@ -20,12 +20,10 @@ if (process.env.NODE_ENV !== "production") {
   app.use(compression());
   // Add CORS headers.
   app.use(cors());
+  // Log HTTP requests
+  app.use(morgan("dev"));
 }
 
-// Expose a logger as `log` on the express `req` parameter and log requests.
-// Logging every request have some caveats if they contain sensitive information,
-// consider redacting some information using `pino-noir`.
-app.use(pino());
 // Add security headers to every requests.
 app.use(helmet());
 // Allow express to parse JSON bodies.

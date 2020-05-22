@@ -1,16 +1,14 @@
 import dotenv from "dotenv";
 import http from "http";
 import mongoose from "mongoose";
-import pino from "pino";
 import app from "./app";
 
 // Inject environment variables defined in the `.env` file placed at the root of the project.
 dotenv.config();
 
-const log = pino({ name: "boot" });
 /** @type {(url: string, options: mongoose.ConnectionOptions) => Promise<void>} */
 const connectToDatabase = async (url, options) => {
-  log.info(`Connecting to database "${url}"`);
+  console.info(`Connecting to database "${url}"`);
   try {
     await mongoose.connect(url, {
       // Use the new MongoDB driver implementation for parsing connection strings.
@@ -29,15 +27,15 @@ const connectToDatabase = async (url, options) => {
     // Once connected to the database, we listen for process shutdown signals and
     // close the connection gracefully.
     const disconnectFromDatabase = async () => {
-      log.info(`Disconnecting from database ${url}`);
+      console.info(`Disconnecting from database ${url}`);
       await mongoose.connection.close();
-      log.info(`Disconnected from database ${url}`);
+      console.info(`Disconnected from database ${url}`);
     };
     process.once("SIGINT", disconnectFromDatabase).once("SIGTERM", disconnectFromDatabase);
 
-    log.info(`Connected to database "${url}"`);
+    console.info(`Connected to database "${url}"`);
   } catch (error) {
-    log.error(`Failed to connect to database "${url}"`);
+    console.error(`Failed to connect to database "${url}"`);
     throw error;
   }
 };
@@ -45,16 +43,16 @@ const connectToDatabase = async (url, options) => {
 /** @type {(app: http.RequestListener, options: import('net').ListenOptions) => Promise<void>} */
 const startHTTPServer = async (app, options) => {
   const address = `http://${options.host}:${options.port}`;
-  log.info(`Starting HTTP server on "${address}"`);
+  console.info(`Starting HTTP server on "${address}"`);
   return new Promise((resolve, reject) => {
     http
       .createServer(app)
       .listen(options, () => {
-        log.info(`HTTP server started on "${address}"`);
+        console.info(`HTTP server started on "${address}"`);
         return resolve();
       })
       .on("error", (error) => {
-        log.error(`Failed to start HTTP server on "${address}"`);
+        console.error(`Failed to start HTTP server on "${address}"`);
         reject(error);
       });
   });
@@ -62,7 +60,7 @@ const startHTTPServer = async (app, options) => {
 
 /** @type {(app: http.RequestListener) => Promise<void>} */
 const startServer = async (app) => {
-  log.info("Starting server");
+  console.info("Starting server");
   try {
     await Promise.all([
       // Retrieve mongodb information from environement variables and connect to the database.
@@ -80,11 +78,11 @@ const startServer = async (app) => {
         port: parseInt(process.env.PORT, 10),
       }),
     ]);
-    log.info("Server started");
+    console.info("Server started");
   } catch (error) {
     // If something fails during start up (http server or database connection),
     // we stop the server process.
-    log.error("Failed to start server", error);
+    console.error("Failed to start server", error);
     process.exit(1);
   }
 };
