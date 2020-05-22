@@ -35,6 +35,6 @@ export const validationErrorHandler = (err, req, res, next) => {
     ...output.payload,
     meta: Object.fromEntries(
       Object.entries(err.errors).map(([key, value]) => [key, value.properties])
-    )
+    ),
   });
 };

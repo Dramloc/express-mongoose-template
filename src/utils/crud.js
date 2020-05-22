@@ -181,7 +181,7 @@ export const findById = async (Model, id, { select, populate = "" } = {}) => {
  * }
  * ```
  */
-export const validate = document => document.validate();
+export const validate = (document) => document.validate();
 
 const pick = (allowedKeys, object) => {
   const entries = Object.entries(object);
@@ -262,7 +262,7 @@ export const patch = (document, payload) => document.set(sanitize(document.schem
  * await save(document);
  * ```
  */
-export const save = document => document.save();
+export const save = (document) => document.save();
 
 /**
  * Removes the given document.
@@ -275,7 +275,7 @@ export const save = document => document.save();
  * await remove(document);
  * ```
  */
-export const remove = document => document.remove();
+export const remove = (document) => document.remove();
 
 /**
  * Check if the given id a valid document object id
@@ -287,4 +287,4 @@ export const remove = document => document.remove();
  * isIdValid("5e64c1d0c39f823bf8c8af93") === true
  * ```
  */
-export const isIdValid = id => mongoose.Types.ObjectId.isValid(id);
+export const isIdValid = (id) => mongoose.Types.ObjectId.isValid(id);

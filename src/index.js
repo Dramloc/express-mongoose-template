@@ -23,7 +23,7 @@ const connectToDatabase = async (url, options) => {
       // See: https://mongoosejs.com/docs/deprecations.html#useunifiedtopology
       useUnifiedTopology: true,
 
-      ...options
+      ...options,
     });
 
     // Once connected to the database, we listen for process shutdown signals and
@@ -53,7 +53,7 @@ const startHTTPServer = async (app, options) => {
         log.info(`HTTP server started on "${address}"`);
         return resolve();
       })
-      .on("error", error => {
+      .on("error", (error) => {
         log.error(`Failed to start HTTP server on "${address}"`);
         reject(error);
       });
@@ -61,7 +61,7 @@ const startHTTPServer = async (app, options) => {
 };
 
 /** @type {(app: http.RequestListener) => Promise<void>} */
-const startServer = async app => {
+const startServer = async (app) => {
   log.info("Starting server");
   try {
     await Promise.all([
@@ -70,15 +70,15 @@ const startServer = async app => {
       // See: https://mongoosejs.com/docs/connections.html#buffering
       connectToDatabase(process.env.MONGODB_URL, {
         user: process.env.MONGODB_USER,
-        pass: process.env.MONGODB_PASSWORD
+        pass: process.env.MONGODB_PASSWORD,
       }),
 
       // Retrieve HTTP server host and port from environment variables,
       // create HTTP server and listen to connections.
       startHTTPServer(app, {
         host: process.env.HOST,
-        port: parseInt(process.env.PORT, 10)
-      })
+        port: parseInt(process.env.PORT, 10),
+      }),
     ]);
     log.info("Server started");
   } catch (error) {

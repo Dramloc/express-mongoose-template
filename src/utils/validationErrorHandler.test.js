@@ -13,7 +13,7 @@ describe("validationErrorHandler", () => {
         type: "validationErrorType",
         path: "validatedPath",
         value: "validatedValue",
-        reason: "validationErrorReason"
+        reason: "validationErrorReason",
       })
     );
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
@@ -30,9 +30,9 @@ describe("validationErrorHandler", () => {
           type: "validationErrorType",
           path: "validatedPath",
           value: "validatedValue",
-          reason: "validationErrorReason"
-        }
-      }
+          reason: "validationErrorReason",
+        },
+      },
     });
     expect(res.statusCode).toEqual(422);
   });

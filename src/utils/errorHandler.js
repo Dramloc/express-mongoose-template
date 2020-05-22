@@ -23,8 +23,5 @@ export const errorHandler = (err, req, res, next) => {
   }
   log.error(err.stack);
   const { output } = Boom.boomify(err);
-  return res
-    .set(output.headers)
-    .status(output.statusCode)
-    .json(output.payload);
+  return res.set(output.headers).status(output.statusCode).json(output.payload);
 };

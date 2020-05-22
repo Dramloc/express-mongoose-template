@@ -1,7 +1,7 @@
 import Boom from "@hapi/boom";
 
 /** @type {<T extends import("express").RequestHandler | import("express").RequestParamHandler> (handler: T) => T} */
-const forwardError = handler => async (req, res, next, ...args) => {
+const forwardError = (handler) => async (req, res, next, ...args) => {
   try {
     return await handler(req, res, next, ...args);
   } catch (error) {

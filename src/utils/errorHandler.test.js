@@ -12,7 +12,7 @@ describe("errorHandler", () => {
     expect(res.body).toEqual({
       error: "Not Found",
       statusCode: 404,
-      message: "Test message"
+      message: "Test message",
     });
     expect(res.statusCode).toEqual(404);
   });
@@ -26,7 +26,7 @@ describe("errorHandler", () => {
     expect(res.body).toEqual({
       error: "Internal Server Error",
       statusCode: 500,
-      message: "An internal server error occurred"
+      message: "An internal server error occurred",
     });
     expect(res.statusCode).toEqual(500);
   });

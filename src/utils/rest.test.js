@@ -294,7 +294,7 @@ describe("findById", () => {
 
 describe("bind", () => {
   it("should call the handler with the document stored in express locals and the request", async () => {
-    const handler = jest.fn(document => document);
+    const handler = jest.fn((document) => document);
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
     const document = { test: "document" };
     res.setLocals("document", document);

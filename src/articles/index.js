@@ -7,7 +7,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(rest.find({ handler: req => crud.find(Article, req.query) }))
+  .get(rest.find({ handler: (req) => crud.find(Article, req.query) }))
   .post(
     rest.bind({ handler: (_, req) => crud.create(Article, req.body) }),
     rest.validate({ handler: crud.validate }),
@@ -18,7 +18,7 @@ router.param("id", rest.validateParam({ handler: crud.isIdValid })).param(
   "id",
   rest.load({
     handler: (id, req) => crud.findById(Article, id, req.query),
-    modelName: Article.modelName
+    modelName: Article.modelName,
   })
 );
 
@@ -27,14 +27,14 @@ router
   .get(rest.findById())
   .put(
     rest.bind({
-      handler: (document, req) => crud.update(document, req.body)
+      handler: (document, req) => crud.update(document, req.body),
     }),
     rest.validate({ handler: crud.validate }),
     rest.save({ handler: crud.save, isNew: false })
   )
   .patch(
     rest.bind({
-      handler: (document, req) => crud.patch(document, req.body)
+      handler: (document, req) => crud.patch(document, req.body),
     }),
     rest.validate({ handler: crud.validate }),
     rest.save({ handler: crud.save, isNew: false })

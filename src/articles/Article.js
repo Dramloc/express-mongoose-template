@@ -7,13 +7,13 @@ const ArticleSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
       required: true,
-      unique: true
+      unique: true,
     },
     title: { type: String, required: true },
-    body: { type: String }
+    body: { type: String },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
