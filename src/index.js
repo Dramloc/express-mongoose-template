@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import http from "http";
 import mongoose from "mongoose";
+import ora from "ora";
 import app from "./app";
 
 // Inject environment variables defined in the `.env` file placed at the root of the project.
@@ -8,7 +9,7 @@ dotenv.config();
 
 /** @type {(url: string, options: mongoose.ConnectionOptions) => Promise<void>} */
 const connectToDatabase = async (url, options) => {
-  console.info(`Connecting to database "${url}"`);
+  const spinner = ora(`Connecting to database "${url}"`).start();
   try {
     await mongoose.connect(url, {
       // Use the new MongoDB driver implementation for parsing connection strings.
@@ -27,15 +28,15 @@ const connectToDatabase = async (url, options) => {
     // Once connected to the database, we listen for process shutdown signals and
     // close the connection gracefully.
     const disconnectFromDatabase = async () => {
-      console.info(`Disconnecting from database ${url}`);
+      const spinner = ora(`Disconnecting from database ${url}`).start();
       await mongoose.connection.close();
-      console.info(`Disconnected from database ${url}`);
+      spinner.succeed(`Disconnected from database ${url}`);
     };
     process.once("SIGINT", disconnectFromDatabase).once("SIGTERM", disconnectFromDatabase);
 
-    console.info(`Connected to database "${url}"`);
+    spinner.succeed(`Connected to database "${url}"`);
   } catch (error) {
-    console.error(`Failed to connect to database "${url}"`);
+    spinner.fail(`Failed to connect to database "${url}"`);
     throw error;
   }
 };
@@ -43,16 +44,16 @@ const connectToDatabase = async (url, options) => {
 /** @type {(app: http.RequestListener, options: import('net').ListenOptions) => Promise<void>} */
 const startHTTPServer = async (app, options) => {
   const address = `http://${options.host}:${options.port}`;
-  console.info(`Starting HTTP server on "${address}"`);
+  const spinner = ora(`Starting HTTP server on "${address}"`).start();
   return new Promise((resolve, reject) => {
     http
       .createServer(app)
       .listen(options, () => {
-        console.info(`HTTP server started on "${address}"`);
+        spinner.succeed(`HTTP server started on "${address}"`);
         return resolve();
       })
       .on("error", (error) => {
-        console.error(`Failed to start HTTP server on "${address}"`);
+        spinner.fail(`Failed to start HTTP server on "${address}"`);
         reject(error);
       });
   });
@@ -60,7 +61,7 @@ const startHTTPServer = async (app, options) => {
 
 /** @type {(app: http.RequestListener) => Promise<void>} */
 const startServer = async (app) => {
-  console.info("Starting server");
+  const spinner = ora("Starting server").start();
   try {
     await Promise.all([
       // Retrieve mongodb information from environement variables and connect to the database.
@@ -78,11 +79,12 @@ const startServer = async (app) => {
         port: parseInt(process.env.PORT, 10),
       }),
     ]);
-    console.info("Server started");
+    spinner.succeed("Server started");
   } catch (error) {
     // If something fails during start up (http server or database connection),
     // we stop the server process.
-    console.error("Failed to start server", error);
+    console.error(error);
+    spinner.fail("Failed to start server. See the error above for more information.");
     process.exit(1);
   }
 };
