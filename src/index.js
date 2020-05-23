@@ -54,7 +54,7 @@ const startHTTPServer = async (app, options) => {
       })
       .on("error", (error) => {
         spinner.fail(`Failed to start HTTP server on "${address}"`);
-        reject(error);
+        return reject(error);
       });
   });
 };
