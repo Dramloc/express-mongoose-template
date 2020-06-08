@@ -36,7 +36,11 @@ if (process.env.NODE_ENV !== "production") {
 app.use(helmet());
 
 // Allow express to parse JSON bodies.
-app.use(bodyParser.json());
+app.use((req, res, next) => {
+  bodyParser.json()(req, res, (err) => {
+    return err ? next(badData(err.message)) : next();
+  });
+});
 
 // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
 // see https://expressjs.com/en/guide/behind-proxies.html
