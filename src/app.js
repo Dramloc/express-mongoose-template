@@ -38,7 +38,7 @@ app.use(helmet());
 // Allow express to parse JSON bodies.
 app.use((req, res, next) => {
   bodyParser.json()(req, res, (err) => {
-    return err ? next(badData(err.message)) : next();
+    return err ? next(Boom.badData(err.message)) : next();
   });
 });
 
