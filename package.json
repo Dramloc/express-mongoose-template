@@ -5,7 +5,7 @@
   "author": "Antoine Colmard <a.colmard@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "if-env NODE_ENV=production && yarn start:production || npm run start:development",
+    "start": "if-env NODE_ENV=production && yarn start:production || yarn start:development",
     "start:development": "nodemon --exec \"babel-node src/index.js\"",
     "prebuild": "rimraf dist",
     "build": "babel src --out-dir dist --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
