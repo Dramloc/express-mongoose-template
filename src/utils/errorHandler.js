@@ -18,7 +18,9 @@ export const errorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
-  console.error(err.stack);
+  if (process.env.NODE_ENV !== "test") {
+    console.error(err.stack);
+  }
   const { output } = Boom.boomify(err);
   return res.set(output.headers).status(output.statusCode).json(output.payload);
 };
