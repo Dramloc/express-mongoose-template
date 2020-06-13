@@ -7,7 +7,6 @@ import express from "express";
 import RateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
-import MongoStore from "rate-limit-mongo";
 import articlesRouter from "./articles";
 import { errorHandler } from "./utils/errorHandler";
 import { notFoundHandler } from "./utils/notFoundHandler";
@@ -51,11 +50,6 @@ app.set("trust proxy", 1);
 // see https://github.com/nfriedly/express-rate-limit for more information
 app.use(
   new RateLimit({
-    store: new MongoStore({
-      uri: process.env.MONGODB_URL,
-      user: process.env.MONGODB_USER,
-      password: process.env.MONGODB_PASSWORD,
-    }),
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 5000, // 5000 requests can be executed during the `windowMs` time window
     message: Boom.tooManyRequests("Too many requests, please try again later.").output.payload,
