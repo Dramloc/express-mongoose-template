@@ -78,18 +78,14 @@
     "printWidth": 100
   },
   "jest": {
-    "testEnvironment": "node",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*.js"
-    ],
     "projects": [
       {
-        "displayName": "test"
+        "displayName": "test",
+        "testEnvironment": "node"
       },
       {
-        "runner": "jest-runner-eslint",
         "displayName": "lint",
+        "runner": "jest-runner-eslint",
         "testMatch": [
           "<rootDir>/src/**/*.js"
         ]
