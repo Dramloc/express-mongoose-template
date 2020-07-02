@@ -67,9 +67,9 @@ const startServer = async (app) => {
       // Retrieve mongodb information from environement variables and connect to the database.
       // While the connection is being established, mongoose will buffer operations.
       // See: https://mongoosejs.com/docs/connections.html#buffering
-      connectToDatabase(process.env.MONGODB_URL, {
-        user: process.env.MONGODB_USER,
-        pass: process.env.MONGODB_PASSWORD,
+      connectToDatabase(process.env.MONGO_URL, {
+        user: process.env.MONGO_USER,
+        pass: process.env.MONGO_PASSWORD,
       }),
 
       // Retrieve HTTP server host and port from environment variables,
