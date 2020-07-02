@@ -10,7 +10,8 @@
     "build": "babel src --out-dir dist --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
     "serve": "cross-env NODE_ENV=production node dist/index.js",
     "test": "is-ci && jest --ci || jest --watch",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
@@ -32,6 +33,7 @@
     "@babel/core": "^7.10.2",
     "@babel/node": "^7.10.1",
     "@babel/preset-env": "^7.10.2",
+    "@shelf/jest-mongodb": "^1.1.5",
     "cross-env": "^7.0.2",
     "eslint": "^7.2.0",
     "eslint-config-prettier": "^6.11.0",
@@ -83,6 +85,7 @@
     "projects": [
       {
         "displayName": "test",
+        "preset": "@shelf/jest-mongodb",
         "testEnvironment": "node"
       },
       {

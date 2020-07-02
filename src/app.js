@@ -13,6 +13,7 @@ import { validationErrorHandler } from "./utils/validationErrorHandler";
 
 const app = express();
 
+/* istanbul ignore next */
 if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   // These middlewares are added for development purposes.
   // Depending on the use case, you can move these middleware outside of this `if` block or

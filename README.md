@@ -29,6 +29,11 @@ You can see any `babel` compilation error in the console.
 Launches the test runner in the interactive watch mode.
 This will run tests using `jest` and lint files using `eslint`.
 
+### `yarn coverage`
+
+Collect test coverage with `jest`.
+Coverage report will be reported in the console and in the `coverage` folder.
+
 ### `yarn lint`
 
 Lint project files using `eslint`.

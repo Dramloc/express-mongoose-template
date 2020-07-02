@@ -10,7 +10,9 @@ const ArticleSchema = new mongoose.Schema(
       unique: true,
     },
     title: { type: String, required: true },
+    description: { type: String },
     body: { type: String },
+    tags: [{ type: String }],
   },
   {
     timestamps: true,
