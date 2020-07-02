@@ -76,7 +76,7 @@ const startServer = async (app) => {
       // create HTTP server and listen to connections.
       startHTTPServer(app, {
         host: process.env.HOST,
-        port: parseInt(process.env.PORT, 10),
+        port: Number(process.env.PORT),
       }),
     ]);
     spinner.succeed("Server started");
