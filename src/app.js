@@ -16,7 +16,7 @@ dotenv.config();
 
 const app = express();
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   // These middlewares are added for development purposes.
   // Depending on the use case, you can move these middleware outside of this `if` block or
   // you can edit your HTTP server (e.g.: Apache, NGINX, etc.) to handle the following cases:
