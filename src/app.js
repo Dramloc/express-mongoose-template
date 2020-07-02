@@ -2,7 +2,6 @@ import Boom from "@hapi/boom";
 import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
-import dotenv from "dotenv";
 import express from "express";
 import RateLimit from "express-rate-limit";
 import helmet from "helmet";
@@ -11,8 +10,6 @@ import articlesRouter from "./articles";
 import { errorHandler } from "./utils/errorHandler";
 import { notFoundHandler } from "./utils/notFoundHandler";
 import { validationErrorHandler } from "./utils/validationErrorHandler";
-
-dotenv.config();
 
 const app = express();
 
