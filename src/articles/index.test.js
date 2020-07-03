@@ -5,7 +5,7 @@ import { Article } from "./Article";
 
 describe("/v1/articles", () => {
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URL, {
+    await mongoose.connect("mongodb://localhost:27017/example-test", {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true,
@@ -13,6 +13,7 @@ describe("/v1/articles", () => {
   });
 
   afterAll(async () => {
+    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
   });
 
