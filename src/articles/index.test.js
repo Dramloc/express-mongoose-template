@@ -5,7 +5,7 @@ import { Article } from "./Article";
 
 describe("/v1/articles", () => {
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017/example-test", {
+    await mongoose.connect(process.env.MONGO_URL || "mongodb://localhost:27017/example-test", {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true,

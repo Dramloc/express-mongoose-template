@@ -4,12 +4,12 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: node:14
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
-        mongodb-version: [4.0, 4.2]
+        node-version: [14.x]
+        mongodb-version: [4.2]
 
     steps:
       - uses: actions/checkout@v2
@@ -35,3 +35,4 @@ jobs:
           cmd: test
         env:
           CI: true
+          MONGO_URL: mongodb://mongo:27017/example-test
