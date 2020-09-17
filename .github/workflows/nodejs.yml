@@ -35,4 +35,4 @@ jobs:
           cmd: test
         env:
           CI: true
-          MONGO_URL: mongodb://mongo:27017/example-test
+          MONGO_URL: mongodb://localhost:27017/example-test
