@@ -3,14 +3,12 @@ name: Node.js CI
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [14.x]
         mongodb-version: [4.2]
-
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -25,10 +23,6 @@ jobs:
         uses: Borales/actions-yarn@v2.1.0
         with:
           cmd: install
-      - name: Build
-        uses: Borales/actions-yarn@v2.1.0
-        with:
-          cmd: build
       - name: Test
         uses: Borales/actions-yarn@v2.1.0
         with:
@@ -36,3 +30,25 @@ jobs:
         env:
           CI: true
           MONGO_URL: mongodb://localhost:27017/example-test
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        uses: Borales/actions-yarn@v2.1.0
+        with:
+          cmd: install
+      - name: Build
+        uses: Borales/actions-yarn@v2.1.0
+        with:
+          cmd: build
