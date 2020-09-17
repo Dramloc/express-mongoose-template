@@ -20,7 +20,7 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Desktop (please complete the following information):**
+**Environment configuration (please complete the following information):**
  - OS: [e.g. Windows]
  - NodeJS version: [e.g. 14.11.0]
 
