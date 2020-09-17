@@ -19,15 +19,11 @@ jobs:
         uses: supercharge/mongodb-github-action@1.3.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
-          mongodb-replica-set: test-rs
       - name: Install dependencies
         uses: Borales/actions-yarn@v2.1.0
         with:
           cmd: install
-      - name: Test
-        uses: Borales/actions-yarn@v2.1.0
-        with:
-          cmd: test
+      - run: npm test
         env:
           CI: true
           MONGO_URL: mongodb://localhost:27017/example-test
@@ -49,7 +45,4 @@ jobs:
         uses: Borales/actions-yarn@v2.1.0
         with:
           cmd: install
-      - name: Build
-        uses: Borales/actions-yarn@v2.1.0
-        with:
-          cmd: build
+      - run: npm run build
