@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 
 // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
 // see https://expressjs.com/en/guide/behind-proxies.html
-app.set("trust proxy", 1);
+app.enable("trust proxy");
 
 // Limit request rate on API, `windowMs` and `max` can be adjusted to match the desired rate.
 // Rate limits attempts are persisted using a MongoDB store to limit request rates accross multiple processes and servers.
