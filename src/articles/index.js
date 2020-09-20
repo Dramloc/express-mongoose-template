@@ -11,14 +11,14 @@ router
   .route("/")
   .get(
     forwardErrors(async (req, res) => {
-      const { limit = 20, skip = 0, sort = "_id", select, populate = "", ...query } = req.query;
-      const listQuery = Article.find(query)
+      const { limit = 20, skip = 0, sort = "_id", select, populate = "", ...filter } = req.query;
+      const listQuery = Article.find(filter)
         .limit(Number(limit))
         .skip(Number(skip))
         .sort(sort)
         .select(select)
         .populate(populate);
-      const totalCountQuery = Article.find(listQuery.getQuery()).countDocuments();
+      const totalCountQuery = Article.find(listQuery.getFilter()).countDocuments();
       const [list, totalCount] = await Promise.all([listQuery, totalCountQuery]);
       res.set("X-Total-Count", String(totalCount));
       return res.json(list);
