@@ -2,7 +2,7 @@ import Boom from "@hapi/boom";
 import mongoose from "mongoose";
 
 /**
- * Forwards mongoose ValidationError errors as `Boom.badData` errors.
+ * Forwards a mongoose `ValidationError` as a `Boom.badData` error.
  * The `meta` property will be added to the error data with extra validation information.
  * @type {import("express-serve-static-core").ErrorRequestHandler}
  */
