@@ -1,4 +1,4 @@
-const { sanitize } = require("./sanitize");
+import { sanitize } from "./sanitize";
 
 describe("sanitize", () => {
   it("should remove mongoose special properties from request body", () => {
