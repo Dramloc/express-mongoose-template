@@ -2,12 +2,12 @@ import request from "supertest";
 import app from "./app";
 
 describe("POST /", () => {
-  it("should respond with 422 if the JSON payload is invalid", async () => {
+  it("should respond with 400 if the JSON payload is invalid", async () => {
     const response = await request(app).post("/").set("Content-Type", "application/json").send("{");
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(400);
     expect(response.body).toStrictEqual({
-      statusCode: 422,
-      error: "Unprocessable Entity",
+      statusCode: 400,
+      error: "Bad Request",
       message: "Unexpected end of JSON input",
     });
   });
