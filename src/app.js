@@ -2,7 +2,7 @@ import Boom from "@hapi/boom";
 import compression from "compression";
 import cors from "cors";
 import express from "express";
-import RateLimit from "express-rate-limit";
+import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 import articlesRouter from "./articles";
@@ -40,10 +40,9 @@ app.use(express.json());
 app.enable("trust proxy");
 
 // Limit request rate on API, `windowMs` and `max` can be adjusted to match the desired rate.
-// Rate limits attempts are persisted using a MongoDB store to limit request rates accross multiple processes and servers.
 // see https://github.com/nfriedly/express-rate-limit for more information
 app.use(
-  new RateLimit({
+  rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 5000, // 5000 requests can be executed during the `windowMs` time window
     message: Boom.tooManyRequests("Too many requests, please try again later.").output.payload,
