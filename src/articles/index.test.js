@@ -61,12 +61,12 @@ describe("/v1/articles", () => {
         slug: {
           message: "Path `slug` is required.",
           path: "slug",
-          type: "required",
+          kind: "required",
         },
         title: {
           message: "Path `title` is required.",
           path: "title",
-          type: "required",
+          kind: "required",
         },
       },
       statusCode: 422,
@@ -92,7 +92,7 @@ describe("/v1/articles", () => {
         slug: {
           message: "Error, expected `slug` to be unique. Value: `the-slug`",
           path: "slug",
-          type: "unique",
+          kind: "unique",
           value: "the-slug",
         },
       },

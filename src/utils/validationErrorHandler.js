@@ -1,40 +1,26 @@
-/**
- * @typedef ValidationErrorMeta
- * @property {string} message The validation error message
- * @property {string} type The validation error type (e.g.: "required", "unique", etc.)
- * @property {string} path The document path that failed validation
- * @property {any} [value] The value that did not pass validation (used by mongoose-unique-validator)
- * @property {any} [reason] The reason why value did not pass validation.
- */
-
 import Boom from "@hapi/boom";
+import mongoose from "mongoose";
 
 /**
- * @typedef FormattedValidationError
- * @property {number} statusCode The error HTTP status code (422)
- * @property {string} error The error HTTP status message ("Unprocessable Entity")
- * @property {string} message The validation error message
- * @property {{[key: string]: ValidationErrorMeta}} meta Additional information about the validation error
- */
-
-/**
- * Format `Boom.badData` (422) errors to give additional validation information.
- * This handler expects that the `Boom.badData` received the mongoose `ValidationError` as additional error data.
- * The `meta` property will be added to the response with
- * @type {import("express-serve-static-core").ErrorRequestHandler<import("express-serve-static-core").ParamsDictionary, FormattedValidationError>}
+ * Forwards mongoose ValidationError errors as `Boom.badData` errors.
+ * The `meta` property will be added to the error data with extra validation information.
+ * @type {import("express-serve-static-core").ErrorRequestHandler}
  */
 export const validationErrorHandler = (err, req, res, next) => {
   if (!err) {
     return next();
   }
-  if (err.name !== "ValidationError") {
+  if (!(err instanceof mongoose.Error.ValidationError)) {
     return next(err);
   }
-  const { output } = Boom.badData(err);
-  return res.status(output.statusCode).json({
-    ...output.payload,
-    meta: Object.fromEntries(
-      Object.entries(err.errors).map(([key, value]) => [key, value.properties])
-    ),
-  });
+  return next(
+    Boom.badData(err.message, {
+      meta: Object.fromEntries(
+        Object.entries(err.errors).map(([key, { message, kind, path, value, reason }]) => [
+          key,
+          { message, kind, path, value, reason },
+        ])
+      ),
+    })
+  );
 };

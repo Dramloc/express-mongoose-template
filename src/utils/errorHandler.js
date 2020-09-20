@@ -22,6 +22,9 @@ export const errorHandler = (err, req, res, next) => {
   if (process.env.NODE_ENV !== "test" && !Boom.isBoom(err)) {
     console.error(err.stack);
   }
-  const { output } = Boom.boomify(err);
-  return res.set(output.headers).status(output.statusCode).json(output.payload);
+  const { output, data } = Boom.boomify(err);
+  return res
+    .set(output.headers)
+    .status(output.statusCode)
+    .json({ ...output.payload, ...data });
 };

@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { validationErrorHandler } from "./validationErrorHandler";
 
 describe("validationErrorHandler", () => {
-  it("should format Boom.badData errors that contain a mongoose validation error correctly", () => {
+  it("should format mongoose `ValidationError` errors correctly", () => {
     const err = new mongoose.Error.ValidationError();
     err.addError(
       "validatedPath",
@@ -17,50 +17,33 @@ describe("validationErrorHandler", () => {
       })
     );
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
-
     validationErrorHandler(err, req, res, next);
-
-    expect(res.body).toEqual({
-      error: "Unprocessable Entity",
-      statusCode: 422,
-      message: "Validation failed: validatedPath: validationErrorMessage",
-      meta: {
-        validatedPath: {
-          message: "validationErrorMessage",
-          type: "validationErrorType",
-          path: "validatedPath",
-          value: "validatedValue",
-          reason: "validationErrorReason",
+    expect(next).toHaveBeenCalledWith(
+      Boom.badData("Validation failed: validatedPath: validationErrorMessage", {
+        meta: {
+          validatedPath: {
+            message: "validationErrorMessage",
+            kind: "validationErrorType",
+            path: "validatedPath",
+            value: "validatedValue",
+            reason: "validationErrorReason",
+          },
         },
-      },
-    });
-    expect(res.statusCode).toEqual(422);
+      })
+    );
   });
 
-  it("should continue if the error is not a Boom.badData", () => {
-    const err = Boom.notFound("Another error");
+  it("should continue if the error is not a mongoose `ValidationError", () => {
+    const err = new Error("Another error");
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
-
     validationErrorHandler(err, req, res, next);
-
-    expect(next).toHaveBeenCalledWith(err);
-  });
-
-  it("should continue if the error does not have a mongoose ValidationError stored in the error's data", () => {
-    const err = Boom.badData("Validation error");
-    const [req, res, next] = [new Request(), new Response(), jest.fn()];
-
-    validationErrorHandler(err, req, res, next);
-
     expect(next).toHaveBeenCalledWith(err);
   });
 
   it("should continue if there is no error", () => {
     const err = undefined;
     const [req, res, next] = [new Request(), new Response(), jest.fn()];
-
     validationErrorHandler(err, req, res, next);
-
     expect(next).toHaveBeenCalledWith();
   });
 });
