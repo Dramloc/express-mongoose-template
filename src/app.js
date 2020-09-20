@@ -1,5 +1,4 @@
 import Boom from "@hapi/boom";
-import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
 import express from "express";
@@ -7,6 +6,7 @@ import RateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 import articlesRouter from "./articles";
+import { bodyParserErrorHandler } from "./utils/bodyParserErrorHandler";
 import { errorHandler } from "./utils/errorHandler";
 import { notFoundHandler } from "./utils/notFoundHandler";
 import { validationErrorHandler } from "./utils/validationErrorHandler";
@@ -33,11 +33,7 @@ if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
 app.use(helmet());
 
 // Allow express to parse JSON bodies.
-app.use((req, res, next) => {
-  bodyParser.json()(req, res, (err) => {
-    return err ? next(Boom.badData(err.message)) : next();
-  });
-});
+app.use(express.json());
 
 // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
 // see https://expressjs.com/en/guide/behind-proxies.html
@@ -59,6 +55,9 @@ app.use("/v1/articles", articlesRouter);
 
 // Handle requests matching no routes.
 app.use(notFoundHandler);
+
+// Handle body parser syntax errors
+app.use(bodyParserErrorHandler);
 
 // Add validation error information
 app.use(validationErrorHandler);
