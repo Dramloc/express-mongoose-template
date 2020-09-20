@@ -69,6 +69,14 @@
       "plugin:jest/recommended",
       "plugin:prettier/recommended"
     ],
+    "rules": {
+      "no-unused-vars": [
+        "warn",
+        {
+          "ignoreRestSiblings": true
+        }
+      ]
+    },
     "env": {
       "node": true,
       "es6": true
