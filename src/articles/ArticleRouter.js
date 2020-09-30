@@ -5,10 +5,9 @@ import { sanitize } from "../utils/sanitize";
 import { validateObjectId } from "../utils/validateObjectId";
 import { Article } from "./Article";
 
-const router = express.Router();
+const ArticleRouter = express.Router();
 
-router
-  .route("/")
+ArticleRouter.route("/")
   .get(
     forwardErrors(async (req, res) => {
       const { limit = 20, skip = 0, sort = "_id", select, populate = "", ...filter } = req.query;
@@ -31,8 +30,7 @@ router
     })
   );
 
-router
-  .param("id", validateObjectId)
+ArticleRouter.param("id", validateObjectId)
   .param(
     "id",
     forwardErrors(async (req, res, next, value) => {
@@ -51,8 +49,7 @@ router
         );
   });
 
-router
-  .route("/:id")
+ArticleRouter.route("/:id")
   .get((req, res) => {
     const { article } = res.locals;
     return res.json(article);
@@ -73,4 +70,4 @@ router
     })
   );
 
-export default router;
+export { ArticleRouter };

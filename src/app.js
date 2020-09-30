@@ -5,7 +5,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
-import articlesRouter from "./articles";
+import { ArticleRouter } from "./articles/ArticleRouter";
 import { bodyParserErrorHandler } from "./utils/bodyParserErrorHandler";
 import { errorHandler } from "./utils/errorHandler";
 import { notFoundHandler } from "./utils/notFoundHandler";
@@ -50,7 +50,7 @@ app.use(
 );
 
 // Our application routes:
-app.use("/v1/articles", articlesRouter);
+app.use("/v1/articles", ArticleRouter);
 
 // Handle requests matching no routes.
 app.use(notFoundHandler);
