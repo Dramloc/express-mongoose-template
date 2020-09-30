@@ -6,8 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --exec \"babel-node src/index.js\"",
-    "prebuild": "rimraf dist",
-    "build": "babel src --out-dir dist --ignore \"src/**/*.spec.js\",\"src/**/*.test.js\"",
+    "build": "babel src --delete-dir-on-start --out-dir dist --ignore \"src/**/*.test.js\"",
     "serve": "cross-env NODE_ENV=production node dist/index.js",
     "test": "is-ci && jest --ci || jest --watch",
     "lint": "eslint src",
@@ -45,7 +44,6 @@
     "jest-runner-eslint": "^0.10.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.1.2",
-    "rimraf": "^3.0.2",
     "supertest": "^4.0.2"
   },
   "babel": {
