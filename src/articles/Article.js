@@ -19,6 +19,7 @@ const ArticleSchema = new mongoose.Schema(
   }
 );
 
+ArticleSchema.path("createdAt").immutable(true);
 ArticleSchema.plugin(uniqueValidator);
 
 export const Article = mongoose.model("Article", ArticleSchema);
