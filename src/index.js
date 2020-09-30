@@ -28,9 +28,9 @@ const connectToDatabase = async (url, options) => {
     // Once connected to the database, we listen for process shutdown signals and
     // close the connection gracefully.
     const disconnectFromDatabase = async () => {
-      const spinner = ora(`Disconnecting from database ${url}`).start();
+      const spinner = ora(`Disconnecting from database "${url}"`).start();
       await mongoose.connection.close();
-      spinner.succeed(`Disconnected from database ${url}`);
+      spinner.succeed(`Disconnected from database "${url}"`);
     };
     process.once("SIGINT", disconnectFromDatabase).once("SIGTERM", disconnectFromDatabase);
 
@@ -46,9 +46,17 @@ const startHTTPServer = async (app, options) => {
   const address = `http://${options.host}:${options.port}`;
   const spinner = ora(`Starting HTTP server on "${address}"`).start();
   return new Promise((resolve, reject) => {
-    http
+    const server = http
       .createServer(app)
       .listen(options, () => {
+        // Once HTTP server is started, we listen for process shutdown signals and
+        // close the server gracefully.
+        const closeHTTPServer = async () => {
+          const spinner = ora("Closing HTTP server").start();
+          await server.close();
+          spinner.succeed("HTTP server closed");
+        };
+        process.once("SIGINT", closeHTTPServer).once("SIGTERM", closeHTTPServer);
         spinner.succeed(`HTTP server started on "${address}"`);
         return resolve();
       })
