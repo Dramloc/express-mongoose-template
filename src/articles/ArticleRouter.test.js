@@ -120,6 +120,26 @@ describe("/v1/articles", () => {
     expect(singleResponse.body).toEqual(createdResponse.body);
   });
 
+  it("should return a 400 if the given id is invalid when retrieving an article", async () => {
+    const response = await request(app).get(`/v1/articles/foo`);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      statusCode: 400,
+      error: "Bad Request",
+      message: "Invalid parameter `id` with value `foo`.",
+    });
+  });
+
+  it("should return a 404 if there is no article with the given id when retrieving an article", async () => {
+    const response = await request(app).get(`/v1/articles/ffffffffffffffffffffffff`);
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({
+      statusCode: 404,
+      error: "Not Found",
+      message: "Article with `id` matching `ffffffffffffffffffffffff` not found.",
+    });
+  });
+
   it("should allow articles to be updated partially", async () => {
     const createdResponse = await request(app)
       .post("/v1/articles")

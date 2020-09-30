@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import { model, Schema } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-const ArticleSchema = new mongoose.Schema(
+const ArticleSchema = new Schema(
   {
     slug: {
       type: String,
@@ -22,4 +22,4 @@ const ArticleSchema = new mongoose.Schema(
 ArticleSchema.path("createdAt").immutable(true);
 ArticleSchema.plugin(uniqueValidator);
 
-export const Article = mongoose.model("Article", ArticleSchema);
+export const Article = model("Article", ArticleSchema);

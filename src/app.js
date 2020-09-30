@@ -2,6 +2,7 @@ import Boom from "@hapi/boom";
 import compression from "compression";
 import cors from "cors";
 import express from "express";
+import "express-async-errors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
