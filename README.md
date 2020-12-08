@@ -8,7 +8,6 @@ Simple template using express and mongoose for building REST APIs.
   ```shell
   yarn
   ```
-- Copy `.env.example` and rename it to `.env` for a default configuration.
 - Run project:
   ```shell
   yarn start
@@ -52,7 +51,7 @@ Runs the project in production mode. Make sure you run `yarn build` before this 
 
 Application configuration is provided by environment variables and accessed in code with `process.env.VARIABLE_NAME`.
 
-In order to share configurations, you can add a `.env` file at the root of the project.
-You can copy `.env.example` and rename it to `.env` for a default configuration.
+Environments variables are loaded using the definitions in the `.env.defaults` file.
+If you need to override some of them, you can create a `.env` file with your overrides.
 
-> If new environment variables are required by the app, they can be added to the `.env.example` to document them.
+> If new environment variables are required by the app, they can be added to the `.env.defaults` to document them.
