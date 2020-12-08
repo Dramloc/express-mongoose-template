@@ -5,9 +5,9 @@
   "author": "Antoine Colmard <a.colmard@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --exec \"babel-node src/index.js\"",
+    "start": "nodemon --exec \"babel-node -r dotenv/config src/index.js\"",
     "build": "babel src --delete-dir-on-start --out-dir dist --ignore \"src/**/*.test.js\"",
-    "serve": "cross-env NODE_ENV=production node dist/index.js",
+    "serve": "cross-env NODE_ENV=production node -r dotenv/config dist/index.js",
     "test": "is-ci && jest --ci || jest --watch",
     "lint": "eslint src",
     "coverage": "jest --coverage"
