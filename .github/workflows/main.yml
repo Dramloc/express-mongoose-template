@@ -20,7 +20,7 @@ jobs:
           node-version: 14
 
       - name: 📥 Install dependencies
-        run: bahmutov/npm-install@v1
+        uses: bahmutov/npm-install@v1
 
       - name: ✅ Run tests
         run: yarn test
