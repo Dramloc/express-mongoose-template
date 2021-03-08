@@ -37,5 +37,5 @@ jobs:
         with:
           branch: main
           git_remote_url: ssh://dokku@express-mongoose-template.dramloc.dev:22/express-mongoose-template
-          git-push-flags: --force
+          git_push_flags: --force
           ssh_private_key: ${{ secrets.DOKKU_SSH_KEY }}
