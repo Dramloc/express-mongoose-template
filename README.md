@@ -10,12 +10,12 @@ Simple template using express and mongoose for building REST APIs.
   ```
 - Run project:
   ```shell
-  yarn start
+  yarn dev
   ```
 
 ## Available scripts
 
-### `yarn start`
+### `yarn dev`
 
 Runs the project in the development mode.
 API will be served on [http://localhost:8080](http://localhost:8080).
@@ -41,9 +41,9 @@ You can run `yarn lint --fix` to autofix fixable issues.
 ### `yarn build`
 
 Build project using `babel` to make it ready for production.
-This should be run before launching `yarn serve`.
+This should be run before launching `yarn start`.
 
-### `yarn serve`
+### `yarn start`
 
 Runs the project in production mode. Make sure you run `yarn build` before this script.
 

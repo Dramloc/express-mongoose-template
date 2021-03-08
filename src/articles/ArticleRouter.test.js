@@ -1,26 +1,20 @@
-import mongoose from "mongoose";
 import request from "supertest";
 import app from "../app";
-import { Article } from "./Article";
+import { dropDatabase, startDatabase, stopDatabase } from "../test-utils/db";
+
+beforeAll(async () => {
+  await startDatabase();
+});
+
+afterEach(async () => {
+  await dropDatabase();
+});
+
+afterAll(async () => {
+  await stopDatabase();
+});
 
 describe("/v1/articles", () => {
-  beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URL || "mongodb://localhost:27017/example-test", {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-    });
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
-  });
-
-  afterEach(async () => {
-    await Article.deleteMany();
-  });
-
   it("should create articles that match article schema", async () => {
     const response = await request(app)
       .post("/v1/articles")

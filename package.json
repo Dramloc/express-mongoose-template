@@ -5,9 +5,9 @@
   "author": "Antoine Colmard <a.colmard@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --exec \"babel-node -r dotenv-defaults/config src/index.js\"",
+    "dev": "nodemon --exec \"babel-node -r dotenv-defaults/config src/index.js\"",
     "build": "babel src --delete-dir-on-start --out-dir dist --ignore \"src/**/*.test.js\"",
-    "serve": "cross-env NODE_ENV=production node -r dotenv-defaults/config dist/index.js",
+    "start": "cross-env NODE_ENV=production node -r dotenv-defaults/config dist/index.js",
     "test": "is-ci && jest --ci || jest --watch",
     "lint": "eslint src",
     "coverage": "jest --coverage"
@@ -17,6 +17,7 @@
     "@types/jest": "^26.0.20",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv-defaults": "^2.0.1",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
@@ -33,7 +34,7 @@
     "@babel/eslint-parser": "^7.13.8",
     "@babel/node": "^7.13.0",
     "@babel/preset-env": "^7.13.9",
-    "cross-env": "^7.0.3",
+    "@shelf/jest-mongodb": "^1.2.3",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
@@ -84,11 +85,20 @@
   "prettier": {
     "printWidth": 100
   },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "4.4.0"
+    }
+  },
   "jest": {
     "projects": [
       {
+        "preset": "@shelf/jest-mongodb",
         "displayName": "test",
-        "testEnvironment": "node"
+        "testEnvironment": "node",
+        "setupFilesAfterEnv": [
+          "<rootDir>/src/setupTests.js"
+        ]
       },
       {
         "displayName": "lint",

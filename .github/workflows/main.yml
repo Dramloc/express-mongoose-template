@@ -1,0 +1,40 @@
+name: main
+
+on: [push, pull_request]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v2
+
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: 📥 Install dependencies
+        runs: bahmutov/npm-install@v1
+
+      - name: ✅ Run tests
+        runs: yarn test
+        env:
+          CI: true
+
+      - name: 📦 Run build
+        runs: yarn build
+
+      # only deploy main branch on pushes
+      - name: 🚀 Deploy
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+        uses: dokku/github-action@v1.0.1
+        with:
+          branch: main
+          git_remote_url: ssh://dokku@express-mongoose-template.dramloc.dev:22/express-mongoose-template
+          ssh_private_key: ${{ secrets.DOKKU_SSH_KEY }}
