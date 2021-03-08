@@ -20,15 +20,15 @@ jobs:
           node-version: 14
 
       - name: 📥 Install dependencies
-        runs: bahmutov/npm-install@v1
+        run: bahmutov/npm-install@v1
 
       - name: ✅ Run tests
-        runs: yarn test
+        run: yarn test
         env:
           CI: true
 
       - name: 📦 Run build
-        runs: yarn build
+        run: yarn build
 
       # only deploy main branch on pushes
       - name: 🚀 Deploy
