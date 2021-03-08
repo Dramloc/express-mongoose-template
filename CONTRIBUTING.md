@@ -1,6 +1,7 @@
 # Contributing
 
 ## Questions and issues
+
 If you have found a bug, want to suggest a new feature, have a question or need support, feel free to [open an issue](https://github.com/Dramloc/express-mongoose-template/issues/new).
 
 ## Development and pull requests
