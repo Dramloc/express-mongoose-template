@@ -13,6 +13,8 @@ jobs:
 
       - name: ⬇️ Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: 🏗 Setup Node.js
         uses: actions/setup-node@v1
@@ -37,5 +39,4 @@ jobs:
         with:
           branch: main
           git_remote_url: ssh://dokku@express-mongoose-template.dramloc.dev:22/express-mongoose-template
-          git_push_flags: --force
           ssh_private_key: ${{ secrets.DOKKU_SSH_KEY }}
