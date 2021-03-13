@@ -20,15 +20,15 @@ if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   // Depending on the use case, you can move these middleware outside of this `if` block or
   // you can edit your HTTP server (e.g.: Apache, NGINX, etc.) to handle the following cases:
 
-  // Add gzip compression.
-  app.use(compression());
-
-  // Add CORS headers.
-  app.use(cors());
-
   // Log HTTP requests
   app.use(morgan("dev"));
 }
+
+// Add gzip compression.
+app.use(compression());
+
+// Add CORS headers.
+app.use(cors());
 
 // Add security headers to every requests.
 app.use(helmet());
