@@ -1,9 +1,11 @@
 # express-mongoose-template
 
-Simple template using express and mongoose for building REST APIs.
+This project was bootstrapped with [express-mongoose-template](https://github.com/Dramloc/express-mongoose-template), a simple template based on [Express](https://expressjs.com/) and [Mongoose](https://mongoosejs.com/) that helps you build flexible and simple REST APIs.
 
 ## Usage
 
+- [Use this template](https://github.com/Dramloc/express-mongoose-template) to create a new repository
+- Clone the generated repository
 - Install dependencies:
   ```shell
   yarn
@@ -13,39 +15,42 @@ Simple template using express and mongoose for building REST APIs.
   yarn dev
   ```
 
-## Available scripts
+## Available Scripts
+
+In the project directory, you can run:
 
 ### `yarn dev`
 
-Runs the project in the development mode.
+Runs the project in the development mode.\
 API will be served on [http://localhost:8080](http://localhost:8080).
 
-The project will reload using `nodemon` if you make edits.
-You can see any `babel` compilation error in the console.
+The project will reload with `nodemon` if you make edits.\
+You will also see any `babel` compilation error in the console.
 
 ### `yarn test`
 
-Launches the test runner in the interactive watch mode.
+Launches the test runner in the interactive watch mode.\
 This will run tests using `jest` and lint files using `eslint`.
 
 ### `yarn coverage`
 
-Collect test coverage with `jest`.
+Collects test coverage with `jest`.\
 Coverage report will be reported in the console and in the `coverage` folder.
 
 ### `yarn lint`
 
-Lint project files using `eslint`.
+Lints project files using `eslint`.\
 You can run `yarn lint --fix` to autofix fixable issues.
 
 ### `yarn build`
 
-Build project using `babel` to make it ready for production.
+Builds the project with `babel` to make it ready for production. The output will be generated in the `dist` folder.\
 This should be run before launching `yarn start`.
 
 ### `yarn start`
 
-Runs the project in production mode. Make sure you run `yarn build` before this script.
+Runs the project in production mode.\
+Make sure you run `yarn build` before this script.
 
 ## Configuration
 
