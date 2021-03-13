@@ -28,7 +28,11 @@ if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
 app.use(compression());
 
 // Add CORS headers.
-app.use(cors());
+app.use(
+  cors({
+    exposedHeaders: ["X-Total-Count"],
+  })
+);
 
 // Add security headers to every requests.
 app.use(helmet());
