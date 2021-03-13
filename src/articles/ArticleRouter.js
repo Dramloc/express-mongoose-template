@@ -25,17 +25,19 @@ ArticleRouter.route("/")
     return res.status(201).json(article);
   });
 
-ArticleRouter.param("id", validateObjectId).param("id", async (req, res, next, value, name) => {
+ArticleRouter.param("_id", validateObjectId).param("_id", async (req, res, next, value, name) => {
   const { select, populate = "" } = req.query;
-  const article = await Article.findById(value).select(select).populate(populate);
+  const article = await Article.findOne({ [name]: value })
+    .select(select)
+    .populate(populate);
   if (article === null) {
-    throw Boom.notFound(`${Article.modelName} with \`${name}\` matching \`${value}\` not found.`);
+    throw Boom.notFound(`Cannot find ${Article.modelName} with \`${name}\` matching \`${value}\`.`);
   }
   res.locals.article = article;
   return next();
 });
 
-ArticleRouter.route("/:id")
+ArticleRouter.route("/:_id")
   .get((req, res) => {
     const { article } = res.locals;
     return res.json(article);
