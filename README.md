@@ -4,7 +4,7 @@ This project was bootstrapped with [express-mongoose-template](https://github.co
 
 ## Usage
 
-- [Use this template](https://github.com/Dramloc/express-mongoose-template) to create a new repository
+- [Use this template](https://github.com/Dramloc/express-mongoose-template/generate) to create a new repository
 - Clone the generated repository
 - Install dependencies:
   ```shell
