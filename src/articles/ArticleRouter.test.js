@@ -120,7 +120,7 @@ describe("/v1/articles", () => {
     expect(response.body).toEqual({
       statusCode: 400,
       error: "Bad Request",
-      message: "Invalid parameter `id` with value `foo`.",
+      message: "Invalid parameter `_id` with value `foo`.",
     });
   });
 
@@ -130,7 +130,7 @@ describe("/v1/articles", () => {
     expect(response.body).toEqual({
       statusCode: 404,
       error: "Not Found",
-      message: "Article with `id` matching `ffffffffffffffffffffffff` not found.",
+      message: "Cannot find Article with `_id` matching `ffffffffffffffffffffffff`.",
     });
   });
 
