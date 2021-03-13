@@ -31,6 +31,7 @@ app.use(compression());
 app.use(
   cors({
     exposedHeaders: ["X-Total-Count"],
+    maxAge: 600,
   })
 );
 
