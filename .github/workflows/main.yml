@@ -30,22 +30,3 @@ jobs:
 
       - name: 📦 Run build
         run: yarn build
-
-  deploy:
-    # only deploy main branch on pushes
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
-    name: 🚀 Deploy
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: 🚀 Deploy
-        uses: dokku/github-action@v1.0.1
-        with:
-          branch: main
-          git_remote_url: ssh://dokku@express-mongoose-template.dramloc.dev:22/express-mongoose-template
-          ssh_private_key: ${{ secrets.DOKKU_SSH_KEY }}
